@@ -4,6 +4,7 @@ import shutil
 
 from staticsauce import config
 from staticsauce import templating
+from staticsauce import routes
 from staticsauce.commands.build import build
 
 
@@ -33,6 +34,7 @@ def preprocess():
 def main():
     config_filename = sys.argv[1]
     config.init(config_filename)
+    routes.init()
     templating.init()
 
     preprocess()

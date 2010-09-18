@@ -1,26 +1,52 @@
-import os
-
+from staticsauce import config
 
 class Route:
-    def __init__(self, url, filename, template, **kwargs):
-        self.url = url
+    def __init__(self, filename, controller, action, permutations):
         self.filename = filename
-        self.template = template
-        self.kwargs = kwargs
+        self.controller = controller
+        self.action = action
+        self.permutations = permutations
 
 
 class RouteMapper:
     def __init__(self):
-        self._routes = []
+        self._routes = {}
 
-    def add(self, url, filename, template, **kwargs):
-        self._routes.append(Route(url, filename, template, **kwargs))
+    def add(self, name, filename, controller, action, permutations=None):
+        if name in self._routes:
+            raise KeyError(name)
+        self._routes[name] = Route(filename, controller, action, permutations)
 
     def extend(self, prefix, mapper):
-        self._routes.extend(map(lambda route: Route(prefix + route.url,
-                                                    prefix + route.filename,
-                                                    route.template,
-                                                    **route.kwargs), mapper))
+        for name, route in mapper.routes():
+            filename = prefix + route.filename
+            self.add(name, filename, route.controller, route.action,
+                     route.permutations)
+
+    def routes(self):
+        return self._routes.iteritems()
 
     def __iter__(self):
-        return self._routes.__iter__()
+        return self._routes.itervalues()
+
+    def __getitem__(self, name):
+        return self._routes[name]
+
+
+_mapper = None
+def init():
+    global _mapper
+
+    module_name = config.get('project', 'routes')
+    module = __import__(module_name)
+    components = module_name.split('.')
+    for component in components[1:]:
+        module = getattr(module, component)
+    _mapper = module.mapper()
+
+def mapper():
+    return _mapper
+
+def url(name, **kwargs):
+    return (config.get('site', 'site_root') +
+            _mapper[name].filename.format(**kwargs))

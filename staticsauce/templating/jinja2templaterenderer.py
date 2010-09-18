@@ -1,6 +1,7 @@
 from jinja2 import Environment, FileSystemLoader
 from staticsauce.templating.templaterenderer import TemplateRenderer
 from staticsauce import config
+from staticsauce import routes
 
 
 class Jinja2TemplateRenderer(TemplateRenderer):
@@ -9,6 +10,7 @@ class Jinja2TemplateRenderer(TemplateRenderer):
         self.env = Environment(loader=loader)
         self.env.globals = {
             'SITE_ROOT': config.get('site', 'site_root'),
+            'url': routes.url,
         }
 
     def render(self, template, **kwargs):

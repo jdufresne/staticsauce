@@ -50,6 +50,12 @@ def albums():
     return sorted(albums, key=lambda album: album.date, reverse=True)
 
 
+def album(slug):
+    album, cover = parse_album('.'.join([slug, 'xml']))
+    album.photos, album.cover = photos(album, cover)
+    return album
+
+
 class Album:
     def __init__(self, slug, title, date):
         self.slug = slug
@@ -67,6 +73,11 @@ class Album:
         return url.format(site_root=config.get('site', 'site_root'),
                           slug=self.slug)
 
+    def photo(self, photo_slug):
+        for photo in self.photos:
+            if photo.slug == photo_slug:
+                return photo
+        raise KeyError
 
 class Photo:
     def __init__(self, slug, album):
