@@ -1,7 +1,9 @@
-import errno
-import sys
-import shutil
+#!/usr/bin/env python
 
+import errno
+import os
+import shutil
+import sys
 from staticsauce import config
 from staticsauce import templating
 from staticsauce import routes
@@ -31,14 +33,17 @@ def preprocess():
             print "preprocess", module.__name__
             module_preprocess()
 
+
 def main():
     config_filename = sys.argv[1]
+    sys.path.insert(0, os.path.dirname(config_filename))
     config.init(config_filename)
     routes.init()
     templating.init()
 
     preprocess()
     build()
+
 
 if __name__ == '__main__':
     main()
