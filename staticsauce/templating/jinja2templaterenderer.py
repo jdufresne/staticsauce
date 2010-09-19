@@ -9,6 +9,9 @@ class Jinja2TemplateRenderer(TemplateRenderer):
         loader = FileSystemLoader(config.get('project', 'template_dir'))
         self.env = Environment(loader=loader)
         self.env.globals = {
+            'AUTHOR': config.get('author', 'name'),
+            'AUTHOR_EMAIL': config.get('author', 'email'),
+            'SITE_DOMAIN': config.get('site', 'site_domain'),
             'SITE_ROOT': config.get('site', 'site_root'),
             'url': routes.url,
         }

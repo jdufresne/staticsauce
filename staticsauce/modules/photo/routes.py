@@ -19,4 +19,7 @@ def mapper():
                permutations=[{'album_slug': album.slug, 'slug': photo.slug}
                              for album in albums for photo in album.photos])
 
+    mapper.add('feed', '/feeds/photo.xml',
+               controller='photo', action='feed')
+
     return mapper
