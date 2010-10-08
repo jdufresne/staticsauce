@@ -1,0 +1,8 @@
+============
+Static Sauce
+============
+
+Static sauce is a static website generator. Pages are created using
+the jinja2 [1] template language.
+
+[1] http://jinja.pocoo.org/2/

@@ -1,0 +1,3 @@
+This package uses distutils so to install use the command
+
+  # python setup.py install

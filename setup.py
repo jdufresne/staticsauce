@@ -18,20 +18,27 @@
 
 from distutils.core import setup
 
-setup(
-    name='staticsauce',
-    version='0.1',
-    description='Static Sauce Website Generator',
-    author='Jon Dufresne',
-    author_email='jon.dufresne@gmail.com',
-    url='http://github.com/jdufresne/staticsauce',
-    packages=[
-        'staticsauce',
-        'staticsauce.commands',
-        'staticsauce.modules',
-        'staticsauce.modules.photo',
-        'staticsauce.modules.photo.controllers',
-        'staticsauce.templating',
-    ],
-    scripts=['scripts/staticsauce'],
-)
+NAME = 'staticsauce'
+VERSION = '0.1'
+URL = 'http://jondufresne.org/staticsauce.html'
+DOWNLOAD_URL = 'http://jondufresne.org/staticsauce/{name}-{version}.tar.gz'
+
+if __name__ == '__main__':
+    setup(
+        name=NAME,
+        version=VERSION,
+        description='Static Sauce Website Generator',
+        author='Jon Dufresne',
+        author_email='jon.dufresne@gmail.com',
+        url=URL,
+        download_url=DOWNLOAD_URL.format(name=NAME, version=VERSION),
+        packages=[
+            'staticsauce',
+            'staticsauce.commands',
+            'staticsauce.modules',
+            'staticsauce.modules.photo',
+            'staticsauce.modules.photo.controllers',
+            'staticsauce.templating',
+        ],
+        scripts=['scripts/staticsauce'],
+    )
