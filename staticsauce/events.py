@@ -14,23 +14,31 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import sys
-import os
+import errno
+import shutil
 from staticsauce import config
-from staticsauce import routes
-from staticsauce import templating
 
-class Command(object):
-    config = True
+def preprocess():
+    try:
+        shutil.rmtree(config.get('project', 'build_dir'))
+    except OSError as e:
+        if e.errno != errno.ENOENT:
+            raise e
+    shutil.copytree(
+        config.get('project', 'public_dir'),
+        config.get('project', 'build_dir')
+    )
 
-    def init_parser(self, parser):
-        if self.config:
-            parser.add_argument('-c', '--config', default='development.conf')
+    for name, path in config.modules():
+        module = __import__(path)
+        names = path.split('.')
+        for name in names[1:]:
+            module = getattr(module, name)
 
-    def precommand(self, **kwargs):
-        if self.config:
-            filename = kwargs['config']
-            sys.path.insert(0, os.path.dirname(filename))
-            config.init(filename)
-            routes.init()
-            templating.init()
+        try:
+            module_preprocess = module.events.preprocess
+        except AttributeError:
+            pass
+        else:
+            print "preprocess", module.__name__
+            module_preprocess()

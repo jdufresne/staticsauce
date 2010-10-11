@@ -16,50 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import errno
-import os
-import shutil
-import sys
-from staticsauce import config
-from staticsauce import templating
-from staticsauce import routes
-from staticsauce.commands.build import build
-
-
-def preprocess():
-    try:
-        shutil.rmtree(config.get('project', 'build_dir'))
-    except OSError as e:
-        if e.errno != errno.ENOENT:
-            raise e
-    shutil.copytree(config.get('project', 'public_dir'),
-                    config.get('project', 'build_dir'))
-
-    for name, path in config.modules():
-        module = __import__(path)
-        names = path.split('.')
-        for name in names[1:]:
-            module = getattr(module, name)
-
-        try:
-            module_preprocess = module.events.preprocess
-        except AttributeError:
-            pass
-        else:
-            print "preprocess", module.__name__
-            module_preprocess()
-
-
-def main():
-    config_filename = sys.argv[1]
-    sys.path.insert(0, os.path.dirname(config_filename))
-    config.init(config_filename)
-    routes.init()
-    templating.init()
-
-    preprocess()
-    build()
-
+from staticsauce import main
 
 if __name__ == '__main__':
     main()

@@ -14,23 +14,25 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import sys
 import os
-from staticsauce import config
-from staticsauce import routes
-from staticsauce import templating
+from staticsauce import commands
 
-class Command(object):
-    config = True
+class InitCommand(commands.Command):
+    command = 'init'
+    config = False
 
     def init_parser(self, parser):
-        if self.config:
-            parser.add_argument('-c', '--config', default='development.conf')
+        super(InitCommand, self).init_parser(parser)
+        parser.add_argument('name')
 
-    def precommand(self, **kwargs):
-        if self.config:
-            filename = kwargs['config']
-            sys.path.insert(0, os.path.dirname(filename))
-            config.init(filename)
-            routes.init()
-            templating.init()
+    def __call__(self, name):
+        print 'initializing project'
+        cwd = os.getcwd()
+        os.mkdir(os.path.join(cwd, name))
+        open(os.path.join(cwd, name, 'development.conf'), 'w')
+        os.mkdir(os.path.join(cwd, name, name))
+        open(os.path.join(cwd, name, name, '__init__.py'), 'w')
+        open(os.path.join(cwd, name, name, 'routes.py'), 'w')
+        open(os.path.join(cwd, name, name, 'controllers.py'), 'w')
+        os.mkdir(os.path.join(cwd, name, 'public'))
+        os.mkdir(os.path.join(cwd, name, 'templates'))

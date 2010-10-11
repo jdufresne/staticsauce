@@ -16,55 +16,61 @@
 
 import os
 import errno
-
 from staticsauce import config
 from staticsauce import routes
+from staticsauce import commands
+from staticsauce.events import preprocess
 
-def build():
-    print 'building'
-    build_dir = config.get('project', 'build_dir')
-    for route in routes.mapper():
-        filename = build_dir
-        for component in route.filename.split(os.sep):
-            filename = os.path.join(filename, component)
+class BuildCommand(commands.Command):
+    command = 'build'
 
+    def __call__(self, **kwargs):
+        preprocess()
 
+        print 'building'
+        build_dir = config.get('project', 'build_dir')
+        for route in routes.mapper():
+            filename = build_dir
+            for component in route.filename.split(os.sep):
+                filename = os.path.join(filename, component)
 
-        controller = get_controller(route.controller)
-        action = getattr(controller, route.action)
+            controller = self.get_controller(route.controller)
+            action = getattr(controller, route.action)
 
-        if route.permutations is not None:
-            for permutation in route.permutations:
-                fmt_filename = filename.format(**permutation)
+            if route.permutations is not None:
+                for permutation in route.permutations:
+                    fmt_filename = filename.format(**permutation)
 
+                    try:
+                        os.makedirs(os.path.dirname(fmt_filename))
+                    except OSError as e:
+                        if e.errno != errno.EEXIST:
+                            raise e
+
+                    with open(fmt_filename, 'w') as f:
+                        f.write(action(**permutation))
+            else:
                 try:
-                    os.makedirs(os.path.dirname(fmt_filename))
+                    os.makedirs(os.path.dirname(filename))
                 except OSError as e:
                     if e.errno != errno.EEXIST:
                         raise e
 
-                with open(fmt_filename, 'w') as f:
-                    f.write(action(**permutation))
-        else:
+                with open(filename, 'w') as f:
+                    f.write(action())
+
+    def get_controller(self, controller):
+        for name, path in config.modules():
+            path = '.'.join([path, 'controllers', controller])
             try:
-                os.makedirs(os.path.dirname(filename))
-            except OSError as e:
-                if e.errno != errno.EEXIST:
-                    raise e
+                module = __import__(path)
+            except ImportError:
+                pass
+            else:
+                components = path.split('.')
+                for component in components[1:]:
+                    module = getattr(module, component)
 
-            with open(filename, 'w') as f:
-                f.write(action())
+                return module.__controller__()
 
-def get_controller(controller):
-    for name, path in config.modules():
-        path = '.'.join([path, 'controllers', controller])
-        try:
-            module = __import__(path)
-        except ImportError:
-            pass
-        else:
-            components = path.split('.')
-            for component in components[1:]:
-                module = getattr(module, component)
-            return module.__controller__()
-    raise ImportError("No module named {name}".format(name=controller))
+        raise ImportError("No module named {name}".format(name=controller))
