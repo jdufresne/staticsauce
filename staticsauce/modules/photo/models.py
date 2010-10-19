@@ -28,12 +28,10 @@ def parse_album(filename):
     title = get_element_text(document, 'title')
     year, month, day = map(int, get_element_text(document, 'date').split('-'))
     date = datetime.date(year, month, day)
-    album = Album(slug, title, date)
-
+    description = get_element_text(document, 'description')
+    album = Album(slug, title, date, description)
     cover = get_element_text(document, 'cover')
-
     return album, cover
-
 
 def photos(album, cover_filename):
     photos = []
@@ -52,7 +50,6 @@ def photos(album, cover_filename):
 
     return photos, cover
 
-
 def albums():
     albums = []
     albums_dir = os.path.join(config.get('project', 'data_dir'),
@@ -64,7 +61,6 @@ def albums():
         albums.append(album)
     return sorted(albums, key=lambda album: album.date, reverse=True)
 
-
 def album(slug):
     album, cover = parse_album('.'.join([slug, 'xml']))
     album.photos, album.cover = photos(album, cover)
@@ -72,10 +68,11 @@ def album(slug):
 
 
 class Album:
-    def __init__(self, slug, title, date):
+    def __init__(self, slug, title, date, description):
         self.slug = slug
         self.title = title
         self.date = date
+        self.description = description
         self.cover = None
         self.photos = None
 

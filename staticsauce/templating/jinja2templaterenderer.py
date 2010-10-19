@@ -16,6 +16,7 @@
 
 from jinja2 import Environment, FileSystemLoader
 from staticsauce.templating.templaterenderer import TemplateRenderer
+from staticsauce.templating import filters
 from staticsauce import config
 from staticsauce import routes
 
@@ -30,6 +31,10 @@ class Jinja2TemplateRenderer(TemplateRenderer):
             'SITE_ROOT': config.get('site', 'site_root'),
             'url': routes.url,
         }
+
+        # make registration a decorator
+        self.env.filters['paragraphs'] = filters.paragraphs
+
 
     def render(self, template, **kwargs):
         template = self.env.get_template(template)

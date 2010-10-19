@@ -14,6 +14,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import datetime
 from staticsauce.controller import Controller
 from staticsauce import templating
 from staticsauce.modules.photo import models
@@ -38,7 +39,8 @@ class PhotoController(Controller):
     def feed(self):
         render = templating.render_jinja2
         albums = albums=models.albums()
-        most_recent = min(albums, key=lambda x: x.date)
+        most_recent = min(albums, key=lambda x: x.date) \
+            if albums else datetime.datetime.now()
         updated = most_recent.date
         return render(
             '/photo/feed.xml',

@@ -36,7 +36,7 @@ def resize(image, size):
 def preprocess():
     photo_dir = os.path.join(config.get('project', 'build_dir'),
                              'images', 'photo')
-    os.mkdir(photo_dir)
+    os.makedirs(photo_dir)
     for album in models.albums():
         album_data_dir = os.path.join(
             config.get('project', 'data_dir'),
