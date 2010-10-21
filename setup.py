@@ -35,6 +35,7 @@ if __name__ == '__main__':
         packages=[
             'staticsauce',
             'staticsauce.commands',
+            'staticsauce.controllers',
             'staticsauce.modules',
             'staticsauce.modules.photo',
             'staticsauce.modules.photo.controllers',

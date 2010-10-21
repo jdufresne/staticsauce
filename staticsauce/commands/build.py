@@ -70,7 +70,11 @@ class BuildCommand(commands.Command):
                 components = path.split('.')
                 for component in components[1:]:
                     module = getattr(module, component)
-
                 return module.__controller__()
 
-        raise ImportError("No module named {name}".format(name=controller))
+        path = '.'.join(['staticsauce', 'controllers', controller])
+        module = __import__(path)
+        components = path.split('.')
+        for component in components[1:]:
+            module = getattr(module, component)
+        return module.__controller__()

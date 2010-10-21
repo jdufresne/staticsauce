@@ -33,9 +33,16 @@ def get(section, key):
 
 def modules():
     modules = []
-    for name, path in _config.items('modules'):
-        if name not in _defaults:
-            if not path:
-                path = '.'.join(['staticsauce', 'modules', name])
-            modules.append((name, path))
+
+    try:
+        items = _config.items('modules')
+    except ConfigParser.NoSectionError:
+        pass
+    else:
+        for name, path in items:
+            if name not in _defaults:
+                if not path:
+                    path = '.'.join(['staticsauce', 'modules', name])
+                modules.append((name, path))
+
     return modules
