@@ -40,5 +40,17 @@ if __name__ == '__main__':
             'staticsauce.modules.photo.controllers',
             'staticsauce.templating',
         ],
+        package_dir={'staticsauce': 'staticsauce'},
+        package_data={
+            'staticsauce': [
+                'data/init/development.conf',
+                'data/init/project/__init__.py',
+                'data/init/project/controller.py',
+                'data/init/project/routes.py',
+                'data/init/public/styles/project.css',
+                'data/init/templates/base.html',
+                'data/init/templates/index.html',
+            ]
+        },
         scripts=['scripts/staticsauce'],
     )

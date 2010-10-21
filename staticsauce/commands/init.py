@@ -15,6 +15,8 @@
 
 
 import os
+import shutil
+import staticsauce
 from staticsauce import commands
 
 class InitCommand(commands.Command):
@@ -26,13 +28,13 @@ class InitCommand(commands.Command):
         parser.add_argument('name')
 
     def __call__(self, name):
-        print 'initializing project'
-        cwd = os.getcwd()
-        os.mkdir(os.path.join(cwd, name))
-        open(os.path.join(cwd, name, 'development.conf'), 'w')
-        os.mkdir(os.path.join(cwd, name, name))
-        open(os.path.join(cwd, name, name, '__init__.py'), 'w')
-        open(os.path.join(cwd, name, name, 'routes.py'), 'w')
-        open(os.path.join(cwd, name, name, 'controllers.py'), 'w')
-        os.mkdir(os.path.join(cwd, name, 'public'))
-        os.mkdir(os.path.join(cwd, name, 'templates'))
+        print "initializing project {name}".format(name=name)
+
+        shutil.copytree(
+            os.path.join(
+                os.path.dirname(staticsauce.__file__),
+                'data',
+                'init'
+            ),
+            name
+        )
