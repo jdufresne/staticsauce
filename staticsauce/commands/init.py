@@ -16,6 +16,7 @@
 
 import os
 import shutil
+import tempfile
 import staticsauce
 from staticsauce import commands
 
@@ -30,6 +31,7 @@ class InitCommand(commands.Command):
     def __call__(self, name):
         print "initializing project {name}".format(name=name)
 
+        # cp -r staticsauce/data/init name
         shutil.copytree(
             os.path.join(
                 os.path.dirname(staticsauce.__file__),
@@ -38,3 +40,27 @@ class InitCommand(commands.Command):
             ),
             name
         )
+
+        # mv name/project name/name
+        os.rename(os.path.join(name, 'project'), os.path.join(name, name))
+
+        # sed -e s/{project}/name/
+        replace_in_file(
+            os.path.join(name, 'development.conf'),
+            '{project}',
+            name
+        )
+        replace_in_file(
+            os.path.join(name, 'templates', 'index.html'),
+            '{project}',
+            name
+        )
+
+
+def replace_in_file(filename, old, new):
+    with tempfile.NamedTemporaryFile(delete=False) as fout:
+        with open(filename) as fin:
+            for line in fin:
+                fout.write(line.replace(old, new))
+    shutil.copyfile(fout.name, filename)
+    os.remove(fout.name)
