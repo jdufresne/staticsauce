@@ -15,11 +15,12 @@
 
 
 from staticsauce.controller import Controller
-from staticsauce import templating
+from staticsauce.templating import render
+
 
 class SimpleController(Controller):
     def direct_to_template(self, template):
-        render = templating.render_jinja2
         return render(template)
+
 
 __controller__ = SimpleController

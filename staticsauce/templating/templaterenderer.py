@@ -15,4 +15,5 @@
 
 
 class TemplateRenderer:
-    pass
+    def render(self, template, context=None):
+        raise NotImplementedError

@@ -16,10 +16,12 @@
 
 from staticsauce.templating.jinja2templaterenderer import Jinja2TemplateRenderer
 
-render_jinja2 = None
+
+render = None
+
 
 def init():
-    global render_jinja2
-    renderer = Jinja2TemplateRenderer()
-    render_jinja2 = renderer.render
+    global render
 
+    renderer = Jinja2TemplateRenderer()
+    render = renderer.render

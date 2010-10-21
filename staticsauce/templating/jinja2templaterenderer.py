@@ -14,16 +14,18 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from jinja2 import Environment, FileSystemLoader
-from staticsauce.templating.templaterenderer import TemplateRenderer
-from staticsauce.templating import filters
+import re
+import jinja2
 from staticsauce import config
 from staticsauce import routes
+from staticsauce.templating.templaterenderer import TemplateRenderer
+from staticsauce.templating import filters
+
 
 class Jinja2TemplateRenderer(TemplateRenderer):
     def __init__(self):
-        loader = FileSystemLoader(config.get('project', 'template_dir'))
-        self.env = Environment(loader=loader)
+        loader = jinja2.FileSystemLoader(config.get('project', 'template_dir'))
+        self.env = jinja2.Environment(loader=loader)
         self.env.globals = {
             'AUTHOR': config.get('author', 'name'),
             'AUTHOR_EMAIL': config.get('author', 'email'),
@@ -32,10 +34,21 @@ class Jinja2TemplateRenderer(TemplateRenderer):
             'url': routes.url,
         }
 
-        # make registration a decorator
         self.env.filters['paragraphs'] = filters.paragraphs
 
 
-    def render(self, template, **kwargs):
+    def render(self, template, context=None):
+        if context is None:
+            context = {}
         template = self.env.get_template(template)
-        return template.render(**kwargs)
+        return template.render(context)
+
+
+@jinja2.evalcontextfilter
+def paragraphs(eval_ctx, value):
+    paragraph_re = re.compile(r'(?:\r\n|\r|\n){2,}')
+    result = ''.join('<p>{p}</p>'.format(p=paragraph.strip())
+                     for paragraph in paragraph_re.split(jinja2.escape(value)))
+    if eval_ctx.autoescape:
+        result = jinja2.Markup(result)
+    return result
