@@ -16,13 +16,15 @@
 
 import os
 from PIL import Image
-
 from staticsauce import config
 from staticsauce.modules.photo import models
 
-IMAGE_SIZE = (720, 720)
+
+IMAGE_WIDTH = 720
+IMAGE_HEIGHT = 720
 THUMBNAIL_SIZE = (128, 128)
 QUALITY = 95
+
 
 def resize(image, size):
     if image.size[0] >= image.size[1]:
@@ -33,9 +35,16 @@ def resize(image, size):
         width = height * image.size[0] / image.size[1]
     return image.resize((width, height), Image.ANTIALIAS)
 
+
 def preprocess():
-    photo_dir = os.path.join(config.get('project', 'build_dir'),
-                             'images', 'photo')
+    image_width = int(config.get('photo', 'image_width', IMAGE_WIDTH))
+    image_height = int(config.get('photo', 'image_width', IMAGE_HEIGHT))
+
+    photo_dir = os.path.join(
+        config.get('project', 'build_dir'),
+        'images',
+        'photo'
+    )
     os.makedirs(photo_dir)
     for album in models.albums():
         album_data_dir = os.path.join(
@@ -59,7 +68,7 @@ def preprocess():
                 index=index
             )
 
-            scaled_image = resize(image, IMAGE_SIZE)
+            scaled_image = resize(image, (image_width, image_height))
             scaled_image.save(
                 os.path.join(album_dir, filename),
                 'JPEG',

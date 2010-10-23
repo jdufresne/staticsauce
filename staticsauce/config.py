@@ -28,8 +28,21 @@ def init(filename):
     _config = ConfigParser.SafeConfigParser(_defaults)
     _config.read(filename)
 
-def get(section, key):
-    return _config.get(section, key)
+
+def get(section, key, default=None):
+    def get_default():
+        if default is None:
+            raise
+        return default
+
+    try:
+        value = _config.get(section, key)
+    except ConfigParser.NoSectionError:
+        value = get_default()
+    except ConfigParser.NoOptionError:
+        value = get_default()
+    return value
+
 
 def modules():
     modules = []
