@@ -16,28 +16,43 @@
 
 from staticsauce import config
 
-class Route:
-    def __init__(self, filename, controller, action, permutations):
+
+class Route(object):
+    def __init__(self, filename, controller, action, permutations, **kwargs):
         self.filename = filename
         self.controller = controller
         self.action = action
         self.permutations = permutations
+        self.kwargs = kwargs
 
 
-class RouteMapper:
+class RouteMapper(object):
     def __init__(self):
         self._routes = {}
 
-    def add(self, name, filename, controller, action, permutations=None):
+    def add(self, name, filename, controller, action,
+            permutations=None, **kwargs):
         if name in self._routes:
             raise KeyError(name)
-        self._routes[name] = Route(filename, controller, action, permutations)
+        self._routes[name] = Route(
+            filename,
+            controller,
+            action,
+            permutations,
+            **kwargs
+        )
 
     def extend(self, prefix, mapper):
         for name, route in mapper.routes():
             filename = prefix + route.filename
-            self.add(name, filename, route.controller, route.action,
-                     route.permutations)
+            self.add(
+                name,
+                filename,
+                route.controller,
+                route.action,
+                route.permutations,
+                **route.kwargs
+            )
 
     def routes(self):
         return self._routes.iteritems()
@@ -47,6 +62,10 @@ class RouteMapper:
 
     def __getitem__(self, name):
         return self._routes[name]
+
+    def url(self, name, **kwargs):
+        return config.get('site', 'site_root') + \
+            self[name].filename.format(**kwargs)
 
 
 _mapper = None
@@ -60,9 +79,10 @@ def init():
         module = getattr(module, component)
     _mapper = module.mapper()
 
+
 def mapper():
     return _mapper
 
+
 def url(name, **kwargs):
-    return (config.get('site', 'site_root') +
-            _mapper[name].filename.format(**kwargs))
+    _mapper.url(name, **kwargs)

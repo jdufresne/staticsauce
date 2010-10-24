@@ -6,9 +6,7 @@ def mapper():
         'index',
         '/index.html',
         controller='simple',
-        action='direct_to_template',
-        permutations=[
-            {'template': '/index.html'}
-        ]
+        action='direct',
+        template='/index.html'
     )
     return mapper

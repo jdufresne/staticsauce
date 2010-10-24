@@ -48,7 +48,10 @@ class BuildCommand(commands.Command):
                             raise e
 
                     with open(fmt_filename, 'w') as f:
-                        f.write(action(**permutation))
+                        kwargs = {}
+                        kwargs.update(route.kwargs)
+                        kwargs.update(permutation)
+                        f.write(action(**kwargs))
             else:
                 try:
                     os.makedirs(os.path.dirname(filename))
@@ -57,7 +60,9 @@ class BuildCommand(commands.Command):
                         raise e
 
                 with open(filename, 'w') as f:
-                    f.write(action())
+                    kwargs = {}
+                    kwargs.update(route.kwargs)
+                    f.write(action(**kwargs))
 
     def get_controller(self, controller):
         for name, path in config.modules():

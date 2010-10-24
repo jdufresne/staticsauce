@@ -19,7 +19,7 @@ from staticsauce.templating import render
 
 
 class SimpleController(Controller):
-    def direct_to_template(self, template):
+    def direct(self, template):
         return render(template)
 
 
