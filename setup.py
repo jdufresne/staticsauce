@@ -18,19 +18,22 @@
 
 from distutils.core import setup
 
+
 NAME = 'staticsauce'
-VERSION = '0.1'
-URL = 'http://jondufresne.org/staticsauce.html'
-DOWNLOAD_URL = 'http://jondufresne.org/staticsauce/{name}-{version}.tar.gz'
+VERSION = '0.2'
+URL = 'http://pypi.python.org/pypi/{name}'
+DOWNLOAD_URL = 'http://pypi.python.org/packages/source/s/{name}/{name}-{version}.tar.gz'
+
 
 if __name__ == '__main__':
     setup(
         name=NAME,
         version=VERSION,
         description='Static Sauce Website Generator',
+        long_description=open('README').read(),
         author='Jon Dufresne',
         author_email='jon.dufresne@gmail.com',
-        url=URL,
+        url=URL.format(name=NAME),
         download_url=DOWNLOAD_URL.format(name=NAME, version=VERSION),
         packages=[
             'staticsauce',
