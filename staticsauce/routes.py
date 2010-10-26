@@ -14,7 +14,9 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import sys
 from staticsauce import config
+from staticsauce import utils
 
 
 class Route(object):
@@ -60,29 +62,14 @@ class RouteMapper(object):
     def __iter__(self):
         return self._routes.itervalues()
 
-    def __getitem__(self, name):
-        return self._routes[name]
-
     def url(self, name, **kwargs):
-        return config.get('site', 'site_root') + \
-            self[name].filename.format(**kwargs)
+        site_root = config.get('site', 'site_root')
+        return site_root + self._routes[name].filename.format(**kwargs)
 
 
-_mapper = None
 def init():
-    global _mapper
+    module = utils.import_path(config.get('project', 'routes'))
+    mapper = module.mapper()
 
-    module_name = config.get('project', 'routes')
-    module = __import__(module_name)
-    components = module_name.split('.')
-    for component in components[1:]:
-        module = getattr(module, component)
-    _mapper = module.mapper()
-
-
-def mapper():
-    return _mapper
-
-
-def url(name, **kwargs):
-    _mapper.url(name, **kwargs)
+    sys.modules[__name__].mapper = lambda: mapper
+    sys.modules[__name__].url = mapper.url

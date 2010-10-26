@@ -17,6 +17,8 @@
 import errno
 import shutil
 from staticsauce import config
+from staticsauce import utils
+
 
 def preprocess():
     try:
@@ -30,10 +32,7 @@ def preprocess():
     )
 
     for name, path in config.modules():
-        module = __import__(path)
-        names = path.split('.')
-        for name in names[1:]:
-            module = getattr(module, name)
+        module = utils.import_path(path)
 
         try:
             module_preprocess = module.events.preprocess

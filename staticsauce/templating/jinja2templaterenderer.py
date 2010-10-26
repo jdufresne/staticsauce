@@ -14,12 +14,12 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import sys
 import re
 import jinja2
 from staticsauce import config
 from staticsauce import routes
 from staticsauce.templating.templaterenderer import TemplateRenderer
-from staticsauce.templating import filters
 
 
 class Jinja2TemplateRenderer(TemplateRenderer):
@@ -34,8 +34,7 @@ class Jinja2TemplateRenderer(TemplateRenderer):
             'url': routes.url,
         }
 
-        self.env.filters['paragraphs'] = filters.paragraphs
-
+        self.env.filters['paragraphs'] = paragraphs
 
     def render(self, template, context=None):
         if context is None:

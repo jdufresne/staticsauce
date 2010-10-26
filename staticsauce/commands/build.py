@@ -19,7 +19,9 @@ import errno
 from staticsauce import config
 from staticsauce import routes
 from staticsauce import commands
+from staticsauce import utils
 from staticsauce.events import preprocess
+
 
 class BuildCommand(commands.Command):
     command = 'build'
@@ -68,18 +70,12 @@ class BuildCommand(commands.Command):
         for name, path in config.modules():
             path = '.'.join([path, 'controllers', controller])
             try:
-                module = __import__(path)
+                module = utils.import_path(path)
             except ImportError:
                 pass
             else:
-                components = path.split('.')
-                for component in components[1:]:
-                    module = getattr(module, component)
                 return module.__controller__()
 
         path = '.'.join(['staticsauce', 'controllers', controller])
-        module = __import__(path)
-        components = path.split('.')
-        for component in components[1:]:
-            module = getattr(module, component)
+        module = utils.import_path(path)
         return module.__controller__()

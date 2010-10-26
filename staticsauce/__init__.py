@@ -30,10 +30,9 @@ def main():
         filename = os.path.basename(filename)
         module_name, ext = os.path.splitext(filename)
 
-        module_components = ['staticsauce', 'commands', module_name]
-        module = __import__('.'.join(module_components))
-        for component in module_components[1:]:
-            module = getattr(module, component)
+        module = utils.import_path(
+            '.'.join(['staticsauce', 'commands', module_name])
+        )
 
         for name, obj in inspect.getmembers(module, inspect.isclass):
             if issubclass(obj, commands.Command):
