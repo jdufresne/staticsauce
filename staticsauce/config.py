@@ -15,48 +15,49 @@
 
 
 import os
+import sys
 import ConfigParser
 
 
-_config = None
-_defaults = {}
+class StaticSauceConfig(object):
+    def __init__(self, filename):
+        self.defaults = {
+            'project_dir': os.path.abspath(os.path.dirname(filename))
+        }
+        self.config = ConfigParser.SafeConfigParser(self.defaults)
+        self.config.read(filename)
+
+    def get(self, section, key, default=None):
+        def get_default():
+            if default is None:
+                raise
+            return default
+
+        try:
+            value = self.config.get(section, key)
+        except ConfigParser.NoSectionError:
+            value = get_default()
+        except ConfigParser.NoOptionError:
+            value = get_default()
+        return value
+
+    def modules(self):
+        modules = []
+        try:
+            items = self.config.items('modules')
+        except ConfigParser.NoSectionError:
+            pass
+        else:
+            for name, path in items:
+                if name not in self.defaults:
+                    if not path:
+                        path = '.'.join(['staticsauce', 'modules', name])
+                    modules.append((name, path))
+        return modules
+
 
 def init(filename):
-    global _config
-    global _defaults
+    config = StaticSauceConfig(filename)
 
-    _defaults['project_dir'] = os.path.abspath(os.path.dirname(filename))
-    _config = ConfigParser.SafeConfigParser(_defaults)
-    _config.read(filename)
-
-
-def get(section, key, default=None):
-    def get_default():
-        if default is None:
-            raise
-        return default
-
-    try:
-        value = _config.get(section, key)
-    except ConfigParser.NoSectionError:
-        value = get_default()
-    except ConfigParser.NoOptionError:
-        value = get_default()
-    return value
-
-
-def modules():
-    modules = []
-
-    try:
-        items = _config.items('modules')
-    except ConfigParser.NoSectionError:
-        pass
-    else:
-        for name, path in items:
-            if name not in _defaults:
-                if not path:
-                    path = '.'.join(['staticsauce', 'modules', name])
-                modules.append((name, path))
-
-    return modules
+    sys.modules[__name__].get = config.get
+    sys.modules[__name__].modules = config.modules
