@@ -20,6 +20,7 @@ import xml.dom.minidom
 from staticsauce import config
 from staticsauce.helpers import get_element_text, slug_from_filename
 
+
 def parse_album(filename):
     albums_dir = os.path.join(config.get('project', 'data_dir'),
                               'photo', 'albums')
@@ -28,10 +29,14 @@ def parse_album(filename):
     title = get_element_text(document, 'title')
     year, month, day = map(int, get_element_text(document, 'date').split('-'))
     date = datetime.date(year, month, day)
-    description = get_element_text(document, 'description')
+    try:
+        description = get_element_text(document, 'description')
+    except KeyError:
+        description = None
     album = Album(slug, title, date, description)
     cover = get_element_text(document, 'cover')
     return album, cover
+
 
 def photos(album, cover_filename):
     photos = []
@@ -50,6 +55,7 @@ def photos(album, cover_filename):
 
     return photos, cover
 
+
 def albums():
     albums = []
     albums_dir = os.path.join(config.get('project', 'data_dir'),
@@ -60,6 +66,7 @@ def albums():
         album.photos, album.cover = photos(album, cover)
         albums.append(album)
     return sorted(albums, key=lambda album: album.date, reverse=True)
+
 
 def album(slug):
     album, cover = parse_album('.'.join([slug, 'xml']))
@@ -90,6 +97,7 @@ class Album:
             if photo.slug == photo_slug:
                 return photo
         raise KeyError
+
 
 class Photo:
     def __init__(self, slug, album):
