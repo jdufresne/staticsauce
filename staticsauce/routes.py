@@ -59,8 +59,10 @@ class RouteMapper(object):
         return self._routes.itervalues()
 
     def url(self, name, **kwargs):
-        site_root = config.get('site', 'site_root')
-        return site_root + self._routes[name].filename.format(**kwargs)
+        return path_append(
+            config.get('site', 'site_root'),
+            self._routes[name].filename.format(**kwargs)
+        )
 
 
 def init():

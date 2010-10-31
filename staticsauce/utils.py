@@ -27,9 +27,11 @@ def import_path(path):
 
 
 def path_append(root, path):
-    components = [root]
-    components.extend(path.split(os.sep))
-    return os.path.join(*components)
+    if root:
+        components = [root]
+        components.extend(path.split(os.sep))
+        path = os.path.join(*components)
+    return path
 
 
 def slug_from_filename(filename):
