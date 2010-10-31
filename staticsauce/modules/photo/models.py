@@ -18,7 +18,7 @@ import os
 import datetime
 import xml.dom.minidom
 from staticsauce import config
-from staticsauce.helpers import get_element_text, slug_from_filename
+from staticsauce.utils import get_element_text, slug_from_filename
 
 
 def parse_album(filename):

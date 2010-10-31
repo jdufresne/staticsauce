@@ -16,14 +16,13 @@
 
 import sys
 from staticsauce import config
-from staticsauce import utils
+from staticsauce.utils import path_append, import_path
 
 
 class Route(object):
-    def __init__(self, filename, controller, action, permutations, **kwargs):
+    def __init__(self, filename, controller, permutations, **kwargs):
         self.filename = filename
         self.controller = controller
-        self.action = action
         self.permutations = permutations
         self.kwargs = kwargs
 
@@ -32,26 +31,23 @@ class RouteMapper(object):
     def __init__(self):
         self._routes = {}
 
-    def add(self, name, filename, controller, action,
-            permutations=None, **kwargs):
+    def add(self, name, filename, controller, permutations=None, **kwargs):
         if name in self._routes:
             raise KeyError(name)
         self._routes[name] = Route(
             filename,
             controller,
-            action,
             permutations,
             **kwargs
         )
 
     def extend(self, prefix, mapper):
         for name, route in mapper.routes():
-            filename = prefix + route.filename
+            filename = path_append(prefix, route.filename)
             self.add(
                 name,
                 filename,
                 route.controller,
-                route.action,
                 route.permutations,
                 **route.kwargs
             )
@@ -68,7 +64,7 @@ class RouteMapper(object):
 
 
 def init():
-    module = utils.import_path(config.get('project', 'routes'))
+    module = import_path(config.get('project', 'routes'))
     mapper = module.mapper()
 
     sys.modules[__name__].mapper = lambda: mapper

@@ -14,13 +14,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from staticsauce.controller import Controller
 from staticsauce.templating import render
 
 
-class SimpleController(Controller):
-    def direct(self, template):
-        return render(template)
-
-
-__controller__ = SimpleController
+def direct_to_file(template, context=None):
+    return render(template, context)

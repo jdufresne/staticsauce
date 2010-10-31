@@ -19,8 +19,8 @@ import errno
 from staticsauce import config
 from staticsauce import routes
 from staticsauce import commands
-from staticsauce import utils
 from staticsauce.events import preprocess
+from staticsauce.utils import path_append, import_path
 
 
 class BuildCommand(commands.Command):
@@ -32,12 +32,10 @@ class BuildCommand(commands.Command):
         print 'building'
         build_dir = config.get('project', 'build_dir')
         for route in routes.mapper():
-            filename = build_dir
-            for component in route.filename.split(os.sep):
-                filename = os.path.join(filename, component)
-
-            controller = self.get_controller(route.controller)
-            action = getattr(controller, route.action)
+            filename = path_append(build_dir, route.filename)
+            module, controller = route.controller.rsplit('.', 1)
+            module = import_path(module)
+            controller = getattr(module, controller)
 
             if route.permutations is not None:
                 for permutation in route.permutations:
@@ -47,35 +45,21 @@ class BuildCommand(commands.Command):
                         os.makedirs(os.path.dirname(fmt_filename))
                     except OSError as e:
                         if e.errno != errno.EEXIST:
-                            raise e
+                            raise
 
                     with open(fmt_filename, 'w') as f:
                         kwargs = {}
                         kwargs.update(route.kwargs)
                         kwargs.update(permutation)
-                        f.write(action(**kwargs))
+                        f.write(controller(**kwargs))
             else:
                 try:
                     os.makedirs(os.path.dirname(filename))
                 except OSError as e:
                     if e.errno != errno.EEXIST:
-                        raise e
+                        raise
 
                 with open(filename, 'w') as f:
                     kwargs = {}
                     kwargs.update(route.kwargs)
-                    f.write(action(**kwargs))
-
-    def get_controller(self, controller):
-        for name, path in config.modules():
-            path = '.'.join([path, 'controllers', controller])
-            try:
-                module = utils.import_path(path)
-            except ImportError:
-                pass
-            else:
-                return module.__controller__()
-
-        path = '.'.join(['staticsauce', 'controllers', controller])
-        module = utils.import_path(path)
-        return module.__controller__()
+                    f.write(controller(**kwargs))
