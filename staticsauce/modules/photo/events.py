@@ -22,12 +22,21 @@ from staticsauce.modules.photo import models
 
 IMAGE_WIDTH = 720
 IMAGE_HEIGHT = 720
-THUMBNAIL_SIZE = (128, 128)
+THUMBNAIL_WIDTH = 128
+THUMBNAIL_HEIGHT = 128
 QUALITY = 95
 
 
-def resize(image, size):
-    if image.size[0] >= image.size[1]:
+def crop_center(image, size):
+    left = (image.size[0] - size[0]) / 2 if image.size[0] > size[0] else 0
+    top = (image.size[1] - size[1]) / 2 if image.size[1] > size[1] else 0
+    box = left, top, left + size[0], top + size[1]
+    return image.crop(box)
+
+
+def resize(image, size, max=True):
+    if max and image.size[0] >= image.size[1] or \
+            not max and image.size[1] >= image.size[0]:
         width = size[0]
         height = width * image.size[1] / image.size[0]
     else:
@@ -37,8 +46,28 @@ def resize(image, size):
 
 
 def preprocess():
-    image_width = int(config.get('photo', 'image_width', IMAGE_WIDTH))
-    image_height = int(config.get('photo', 'image_width', IMAGE_HEIGHT))
+    image_width = int(config.get(
+        'photo',
+        'image_width',
+        IMAGE_WIDTH
+    ))
+    image_height = int(config.get(
+        'photo',
+        'image_width',
+        IMAGE_HEIGHT
+    ))
+    thumbnail_width = int(config.get(
+        'photo',
+        'thumbnail_width',
+        THUMBNAIL_WIDTH
+    ))
+    thumbnail_height = int(config.get(
+        'photo',
+        'thumbnail_width',
+        THUMBNAIL_HEIGHT
+    ))
+    thumbnail_size = thumbnail_width, thumbnail_height
+    crop_thumbnail = config.getboolean('photo', 'crop_thumbnail', False)
 
     photo_dir = os.path.join(
         config.get('project', 'build_dir'),
@@ -80,7 +109,10 @@ def preprocess():
                 str(scaled_image.size),
             )
 
-            scaled_image = resize(image, THUMBNAIL_SIZE)
+            scaled_image = resize(image, thumbnail_size, not crop_thumbnail)
+            if crop_thumbnail:
+                scaled_image = crop_center(scaled_image, thumbnail_size)
+
             scaled_image.save(
                 os.path.join(thumbnail_dir, filename),
                 'JPEG',

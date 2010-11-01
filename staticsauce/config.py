@@ -28,18 +28,27 @@ class StaticSauceConfig(object):
         self.config.read(filename)
 
     def get(self, section, key, default=None):
-        def get_default():
-            if default is None:
-                raise
-            return default
-
         try:
             value = self.config.get(section, key)
         except ConfigParser.NoSectionError:
-            value = get_default()
+            value = self._get_default(default)
         except ConfigParser.NoOptionError:
-            value = get_default()
+            value = self._get_default(default)
         return value
+
+    def getboolean(self, section, key, default=None):
+        try:
+            value = self.config.getboolean(section, key)
+        except ConfigParser.NoSectionError:
+            value = self._get_default(default)
+        except ConfigParser.NoOptionError:
+            value = self._get_default(default)
+        return value
+
+    def _get_default(default):
+        if default is None:
+            raise
+        return default
 
     def modules(self):
         modules = []
@@ -60,4 +69,5 @@ def init(filename):
     config = StaticSauceConfig(filename)
 
     sys.modules[__name__].get = config.get
+    sys.modules[__name__].getboolean = config.getboolean
     sys.modules[__name__].modules = config.modules
