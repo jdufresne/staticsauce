@@ -15,7 +15,7 @@
 
 
 from staticsauce.routes import RouteMapper
-from staticsauce.modules.photo import models
+from staticsauce.modules.gallery import models
 
 
 def mapper():
@@ -24,18 +24,18 @@ def mapper():
     mapper.add(
         'albums',
         '/albums.html',
-        'staticsauce.modules.photo.controllers.albums'
+        'staticsauce.modules.gallery.controllers.albums'
     )
     mapper.add(
         'album',
         '/albums/{slug}.html',
-        'staticsauce.modules.photo.controllers.album',
+        'staticsauce.modules.gallery.controllers.album',
         permutations=[{'slug': album.slug} for album in albums]
     )
     mapper.add(
         'photo',
         '/albums/{album_slug}/{slug}.html',
-        controller='staticsauce.modules.photo.controllers.photo',
+        controller='staticsauce.modules.gallery.controllers.photo',
         permutations=[
             {'album_slug': album.slug, 'slug': photo.slug}
             for album in albums for photo in album.photos
@@ -43,7 +43,7 @@ def mapper():
     )
     mapper.add(
         'feed',
-        '/feeds/photo.xml',
-        'staticsauce.modules.photo.controllers.feed'
+        '/feeds/gallery.xml',
+        'staticsauce.modules.gallery.controllers.feed'
     )
     return mapper

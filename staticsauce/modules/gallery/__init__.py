@@ -14,5 +14,5 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from staticsauce.modules.photo import events
-from staticsauce.modules.photo import routes
+from staticsauce.modules.gallery import events
+from staticsauce.modules.gallery import routes

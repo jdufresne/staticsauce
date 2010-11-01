@@ -40,7 +40,7 @@ if __name__ == '__main__':
             'staticsauce.commands',
             'staticsauce.controllers',
             'staticsauce.modules',
-            'staticsauce.modules.photo',
+            'staticsauce.modules.gallery',
             'staticsauce.templating',
         ],
         package_dir={'staticsauce': 'staticsauce'},

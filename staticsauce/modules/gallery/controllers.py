@@ -16,30 +16,30 @@
 
 import datetime
 from staticsauce.templating import render
-from staticsauce.modules.photo import models
-from staticsauce.utils import atom_uuid, rfc3339
+from staticsauce.modules.gallery import models
 
 
 def albums():
-    return render('/photo/albums.html', {'albums': models.albums()})
+    return render('/gallery/albums.html', {'albums': models.albums()})
+
 
 def album(slug):
     album = models.album(slug)
-    return render('/photo/album.html', {'album': album})
+    return render('/gallery/album.html', {'album': album})
+
 
 def photo(album_slug, slug):
     album = models.album(album_slug)
     photo = album.photo(slug)
-    return render('/photo/photo.html', {'photo': photo})
+    return render('/gallery/photo.html', {'photo': photo})
+
 
 def feed():
     albums = albums=models.albums()
     most_recent = min(albums, key=lambda x: x.date) \
         if albums else datetime.datetime.now()
     updated = most_recent.date
-    return render('/photo/feed.xml', {
-        'atom_uuid': atom_uuid,
-        'rfc3339': rfc3339,
+    return render('/gallery/feed.xml', {
         'updated': updated,
         'albums': albums,
     })

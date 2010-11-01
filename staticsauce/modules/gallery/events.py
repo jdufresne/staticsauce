@@ -17,7 +17,7 @@
 import os
 from PIL import Image
 from staticsauce import config
-from staticsauce.modules.photo import models
+from staticsauce.modules.gallery import models
 
 
 IMAGE_WIDTH = 720
@@ -47,42 +47,42 @@ def resize(image, size, max=True):
 
 def preprocess():
     image_width = int(config.get(
-        'photo',
+        'gallery',
         'image_width',
         IMAGE_WIDTH
     ))
     image_height = int(config.get(
-        'photo',
+        'gallery',
         'image_width',
         IMAGE_HEIGHT
     ))
     thumbnail_width = int(config.get(
-        'photo',
+        'gallery',
         'thumbnail_width',
         THUMBNAIL_WIDTH
     ))
     thumbnail_height = int(config.get(
-        'photo',
+        'gallery',
         'thumbnail_width',
         THUMBNAIL_HEIGHT
     ))
     thumbnail_size = thumbnail_width, thumbnail_height
-    crop_thumbnail = config.getboolean('photo', 'crop_thumbnail', False)
+    crop_thumbnail = config.getboolean('gallery', 'crop_thumbnail', False)
 
-    photo_dir = os.path.join(
+    gallery_dir = os.path.join(
         config.get('project', 'build_dir'),
         'images',
-        'photo'
+        'gallery'
     )
-    os.makedirs(photo_dir)
+    os.makedirs(gallery_dir)
     for album in models.albums():
         album_data_dir = os.path.join(
             config.get('project', 'data_dir'),
-            'photo',
+            'gallery',
             'images',
             album.slug
         )
-        album_dir = os.path.join(photo_dir, album.slug)
+        album_dir = os.path.join(gallery_dir, album.slug)
         thumbnail_dir = os.path.join(album_dir, 'thumbnails')
 
         os.mkdir(album_dir)

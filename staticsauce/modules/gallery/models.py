@@ -19,7 +19,7 @@ from staticsauce.utils import import_path
 
 
 def albums():
-    module = import_path('data.photo')
+    module = import_path('data.gallery')
     return module.albums
 
 
@@ -45,7 +45,7 @@ class Album(object):
                 self.cover = photo
 
     def images(self):
-        url = '{site_root}/images/photo/{slug}'
+        url = '{site_root}/images/gallery/{slug}'
         return url.format(
             site_root=config.get('site', 'site_root'),
             slug=self.slug

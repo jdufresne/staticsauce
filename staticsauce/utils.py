@@ -32,11 +32,3 @@ def path_append(root, path):
         components.extend(path.split(os.sep))
         path = os.path.join(*components)
     return path
-
-
-def rfc3339(datetime):
-    return datetime.strftime('%Y-%m-%dT%H:%M:%SZ')
-
-
-def atom_uuid(url):
-    return uuid.uuid5(uuid.NAMESPACE_URL, url).urn

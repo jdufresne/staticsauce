@@ -35,6 +35,7 @@ class Jinja2TemplateRenderer(TemplateRenderer):
         }
 
         self.env.filters['paragraphs'] = paragraphs
+        self.env.filters['strftime'] = strftime
 
     def render(self, template, context=None):
         if context is None:
@@ -51,3 +52,7 @@ def paragraphs(eval_ctx, value):
     if eval_ctx.autoescape:
         result = jinja2.Markup(result)
     return result
+
+
+def strftime(value):
+    return datetime.strftime('%Y-%m-%dT%H:%M:%SZ')
