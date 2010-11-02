@@ -1,12 +1,12 @@
-from staticsauce import routes
+from staticsauce.routes import RouteMapper
+
 
 def mapper():
-    mapper = routes.RouteMapper()
+    mapper = RouteMapper()
     mapper.add(
         'index',
         '/index.html',
-        controller='simple',
-        action='direct',
+        'staticsauce.controllers.simple.direct_to_file',
         template='/index.html'
     )
     return mapper

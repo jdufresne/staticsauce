@@ -70,5 +70,6 @@ class RouteMapper(object):
         )
 
 
-module = import_path(settings.ROUTES)
-mapper = module.mapper()
+if settings is not None:
+    module = import_path(settings.ROUTES)
+    mapper = module.mapper()

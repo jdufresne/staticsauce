@@ -15,7 +15,5 @@
 
 
 class Command(object):
-    conf = True
-
     def init_parser(self, parser):
         pass

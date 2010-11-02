@@ -20,9 +20,9 @@ import tempfile
 import staticsauce
 from staticsauce import commands
 
+
 class InitCommand(commands.Command):
     command = 'init'
-    conf = False
 
     def init_parser(self, parser):
         parser.add_argument('name')
@@ -45,7 +45,7 @@ class InitCommand(commands.Command):
 
         # sed -e s/{project}/name/
         replace_in_file(
-            os.path.join(name, 'development.conf'),
+            os.path.join(name, 'settings.py'),
             '{project}',
             name
         )

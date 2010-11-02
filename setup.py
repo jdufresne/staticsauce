@@ -46,7 +46,7 @@ if __name__ == '__main__':
         package_dir={'staticsauce': 'staticsauce'},
         package_data={
             'staticsauce': [
-                'data/init/development.conf',
+                'data/init/settings.py',
                 'data/init/project/__init__.py',
                 'data/init/project/controller.py',
                 'data/init/project/routes.py',
