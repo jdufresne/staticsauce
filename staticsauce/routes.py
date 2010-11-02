@@ -41,9 +41,14 @@ class RouteMapper(object):
             **kwargs
         )
 
-    def extend(self, prefix, mapper):
+    def extend(self, path, prefix=None):
+        module = import_path(path)
+        mapper = module.mapper()
+
         for name, route in mapper.routes():
-            filename = path_append(prefix, route.filename)
+            filename = route.filename
+            if prefix is not None:
+                filename = path_append(prefix, filename)
             self.add(
                 name,
                 filename,

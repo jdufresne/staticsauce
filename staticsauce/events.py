@@ -17,7 +17,7 @@
 import errno
 import shutil
 from staticsauce import config
-from staticsauce import utils
+from staticsauce.utils import import_path
 
 
 def preprocess():
@@ -32,12 +32,12 @@ def preprocess():
     )
 
     for name, path in config.modules():
-        module = utils.import_path(path)
+        events = import_path('.'.join((path, 'events')))
 
         try:
-            module_preprocess = module.events.preprocess
+            module_preprocess = events.preprocess
         except AttributeError:
             pass
         else:
-            print "preprocess", module.__name__
+            print "preprocess", path
             module_preprocess()
