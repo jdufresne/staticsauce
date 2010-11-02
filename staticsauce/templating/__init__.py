@@ -17,11 +17,5 @@
 from staticsauce.templating.jinja2templaterenderer import Jinja2TemplateRenderer
 
 
-render = None
-
-
-def init():
-    global render
-
-    renderer = Jinja2TemplateRenderer()
-    render = renderer.render
+renderer = Jinja2TemplateRenderer()
+render = renderer.render

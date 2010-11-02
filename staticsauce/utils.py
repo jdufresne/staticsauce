@@ -15,10 +15,10 @@
 
 
 import os
-import uuid
 
 
-def import_path(path):
+def import_path(*args):
+    path = '.'.join(args)
     module = __import__(path)
     components = path.split('.')
     for component in components[1:]:

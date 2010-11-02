@@ -15,18 +15,17 @@
 
 import shutil
 import errno
-from staticsauce import config
 from staticsauce import commands
+from staticsauce.conf import settings
 
 class CleanCommand(commands.Command):
     command = 'clean'
 
-    def __call__(self, **kwargs):
-        build_dir = config.get('project', 'build_dir')
-        print "cleaning {build_dir}".format(build_dir=build_dir)
+    def __call__(self):
+        print "cleaning {build_dir}".format(build_dir=settings.BUILD_DIR)
 
         try:
-            shutil.rmtree(build_dir)
+            shutil.rmtree(settings.BUILD_DIR)
         except OSError as e:
             if e.errno != errno.ENOENT:
                 raise e

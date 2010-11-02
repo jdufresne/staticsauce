@@ -17,21 +17,20 @@
 import sys
 import re
 import jinja2
-from staticsauce import config
 from staticsauce import routes
+from staticsauce.conf import settings
 from staticsauce.templating.templaterenderer import TemplateRenderer
 
 
 class Jinja2TemplateRenderer(TemplateRenderer):
     def __init__(self):
-        loader = jinja2.FileSystemLoader(config.get('project', 'template_dir'))
+        loader = jinja2.FileSystemLoader(settings.TEMPLATE_DIR)
         self.env = jinja2.Environment(loader=loader)
         self.env.globals = {
-            'AUTHOR': config.get('author', 'name'),
-            'AUTHOR_EMAIL': config.get('author', 'email'),
-            'SITE_DOMAIN': config.get('site', 'site_domain'),
-            'SITE_ROOT': config.get('site', 'site_root'),
-            'url': routes.url,
+            'AUTHOR': settings.AUTHOR,
+            'AUTHOR_EMAIL': settings.AUTHOR_EMAIL,
+            'SITE_ROOT': settings.SITE_ROOT,
+            'url': routes.mapper.url,
         }
 
         self.env.filters['paragraphs'] = paragraphs
@@ -47,8 +46,10 @@ class Jinja2TemplateRenderer(TemplateRenderer):
 @jinja2.evalcontextfilter
 def paragraphs(eval_ctx, value):
     paragraph_re = re.compile(r'(?:\r\n|\r|\n){2,}')
-    result = ''.join('<p>{p}</p>'.format(p=paragraph.strip())
-                     for paragraph in paragraph_re.split(jinja2.escape(value)))
+    result = ''.join(
+        '<p>{p}</p>'.format(p=paragraph.strip())
+        for paragraph in paragraph_re.split(jinja2.escape(value))
+    )
     if eval_ctx.autoescape:
         result = jinja2.Markup(result)
     return result

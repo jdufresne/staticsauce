@@ -14,27 +14,9 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import errno
-import shutil
-from staticsauce.conf import settings
-from staticsauce.utils import import_path
-
-
-def preprocess():
-    try:
-        shutil.rmtree(settings.BUILD_DIR)
-    except OSError as e:
-        if e.errno != errno.ENOENT:
-            raise
-    shutil.copytree(settings.PUBLIC_DIR, settings.BUILD_DIR)
-
-    for path in settings.MODULES:
-        events = import_path(path, 'events')
-
-        try:
-            module_preprocess = events.preprocess
-        except AttributeError:
-            pass
-        else:
-            print "preprocess", path
-            module_preprocess()
+QUALITY = 95
+IMAGE_WIDTH = 720
+IMAGE_HEIGHT = 720
+THUMBNAIL_WIDTH = 128
+THUMBNAIL_HEIGHT = 128
+CROP_THUMBNAIL = True

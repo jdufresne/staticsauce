@@ -14,23 +14,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import sys
-import os
-from staticsauce import config
-from staticsauce import routes
-from staticsauce import templating
-
 class Command(object):
-    config = True
+    conf = True
 
     def init_parser(self, parser):
-        if self.config:
-            parser.add_argument('-c', '--config', default='development.conf')
-
-    def precommand(self, **kwargs):
-        if self.config:
-            filename = kwargs['config']
-            sys.path.insert(0, os.path.dirname(filename))
-            config.init(filename)
-            routes.init()
-            templating.init()
+        pass

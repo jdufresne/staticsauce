@@ -16,15 +16,8 @@
 
 import os
 from PIL import Image
-from staticsauce import config
+from staticsauce.conf import settings
 from staticsauce.modules.gallery import models
-
-
-IMAGE_WIDTH = 720
-IMAGE_HEIGHT = 720
-THUMBNAIL_WIDTH = 128
-THUMBNAIL_HEIGHT = 128
-QUALITY = 95
 
 
 def crop_center(image, size):
@@ -46,38 +39,21 @@ def resize(image, size, max=True):
 
 
 def preprocess():
-    image_width = int(config.get(
-        'gallery',
-        'image_width',
-        IMAGE_WIDTH
-    ))
-    image_height = int(config.get(
-        'gallery',
-        'image_width',
-        IMAGE_HEIGHT
-    ))
-    thumbnail_width = int(config.get(
-        'gallery',
-        'thumbnail_width',
-        THUMBNAIL_WIDTH
-    ))
-    thumbnail_height = int(config.get(
-        'gallery',
-        'thumbnail_width',
-        THUMBNAIL_HEIGHT
-    ))
-    thumbnail_size = thumbnail_width, thumbnail_height
-    crop_thumbnail = config.getboolean('gallery', 'crop_thumbnail', False)
-
-    gallery_dir = os.path.join(
-        config.get('project', 'build_dir'),
-        'images',
-        'gallery'
+    image_size = (
+        settings.gallery.IMAGE_WIDTH,
+        settings.gallery.IMAGE_HEIGHT,
     )
+    thumbnail_size = (
+        settings.gallery.THUMBNAIL_WIDTH,
+        settings.gallery.THUMBNAIL_HEIGHT,
+    )
+
+    gallery_dir = os.path.join(settings.BUILD_DIR, 'images', 'gallery')
     os.makedirs(gallery_dir)
+
     for album in models.albums():
         album_data_dir = os.path.join(
-            config.get('project', 'data_dir'),
+            settings.DATA_DIR,
             'gallery',
             'images',
             album.slug
@@ -97,11 +73,11 @@ def preprocess():
                 index=index
             )
 
-            scaled_image = resize(image, (image_width, image_height))
+            scaled_image = resize(image, image_size)
             scaled_image.save(
                 os.path.join(album_dir, filename),
                 'JPEG',
-                quality=QUALITY,
+                quality=settings.gallery.QUALITY,
             )
             print "scaled %s %s -> %s" % (
                 filename,
@@ -109,14 +85,19 @@ def preprocess():
                 str(scaled_image.size),
             )
 
-            scaled_image = resize(image, thumbnail_size, not crop_thumbnail)
-            if crop_thumbnail:
+            scaled_image = resize(
+                image,
+                thumbnail_size,
+                not settings.gallery.CROP_THUMBNAIL
+            )
+
+            if settings.gallery.CROP_THUMBNAIL:
                 scaled_image = crop_center(scaled_image, thumbnail_size)
 
             scaled_image.save(
                 os.path.join(thumbnail_dir, filename),
                 'JPEG',
-                quality=QUALITY,
+                quality=settings.gallery.QUALITY,
             )
             print "scaled %s %s -> %s" % (
                 filename,

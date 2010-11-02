@@ -22,10 +22,9 @@ from staticsauce import commands
 
 class InitCommand(commands.Command):
     command = 'init'
-    config = False
+    conf = False
 
     def init_parser(self, parser):
-        super(InitCommand, self).init_parser(parser)
         parser.add_argument('name')
 
     def __call__(self, name):

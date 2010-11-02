@@ -14,7 +14,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from staticsauce import config
+from staticsauce.conf import settings
 from staticsauce.utils import import_path
 
 
@@ -46,10 +46,7 @@ class Album(object):
 
     def images(self):
         url = '{site_root}/images/gallery/{slug}'
-        return url.format(
-            site_root=config.get('site', 'site_root'),
-            slug=self.slug
-        )
+        return url.format(site_root=settings.SITE_ROOT, slug=self.slug)
 
     def thumbnails(self):
         url = '{images}/thumbnails'

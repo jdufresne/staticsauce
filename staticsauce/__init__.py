@@ -14,11 +14,18 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import os
+import sys
+
+if os.path.exists(os.path.join(os.getcwd(), 'settings.py')):
+    sys.path.insert(0, os.getcwd())
+
 import argparse
 import glob
 import inspect
-import os
 from staticsauce import commands
+from staticsauce.utils import import_path
+
 
 def main():
     parser = argparse.ArgumentParser()
@@ -30,9 +37,7 @@ def main():
         filename = os.path.basename(filename)
         module_name, ext = os.path.splitext(filename)
 
-        module = utils.import_path(
-            '.'.join(['staticsauce', 'commands', module_name])
-        )
+        module = import_path('staticsauce', 'commands', module_name)
 
         for name, obj in inspect.getmembers(module, inspect.isclass):
             if issubclass(obj, commands.Command):
@@ -42,8 +47,9 @@ def main():
                 subparser.set_defaults(_command=command)
 
     args = parser.parse_args()
-    kwargs = {name: obj for name, obj in inspect.getmembers(args)
-              if not name.startswith('_')}
+    kwargs = {
+        name: obj for name, obj in inspect.getmembers(args)
+        if not name.startswith('_')
+    }
     command = args._command
-    command.precommand(**kwargs)
     command(**kwargs)

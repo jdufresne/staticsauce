@@ -16,9 +16,9 @@
 
 import os
 import errno
-from staticsauce import config
 from staticsauce import routes
 from staticsauce import commands
+from staticsauce.conf import settings
 from staticsauce.events import preprocess
 from staticsauce.utils import path_append, import_path
 
@@ -26,13 +26,12 @@ from staticsauce.utils import path_append, import_path
 class BuildCommand(commands.Command):
     command = 'build'
 
-    def __call__(self, **kwargs):
+    def __call__(self):
         preprocess()
 
         print 'building'
-        build_dir = config.get('project', 'build_dir')
-        for route in routes.mapper():
-            filename = path_append(build_dir, route.filename)
+        for route in routes.mapper:
+            filename = path_append(settings.BUILD_DIR, route.filename)
             module, controller = route.controller.rsplit('.', 1)
             module = import_path(module)
             controller = getattr(module, controller)

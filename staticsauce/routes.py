@@ -15,7 +15,7 @@
 
 
 import sys
-from staticsauce import config
+from staticsauce.conf import settings
 from staticsauce.utils import path_append, import_path
 
 
@@ -65,14 +65,10 @@ class RouteMapper(object):
 
     def url(self, name, **kwargs):
         return path_append(
-            config.get('site', 'site_root'),
+            settings.SITE_ROOT,
             self._routes[name].filename.format(**kwargs)
         )
 
 
-def init():
-    module = import_path(config.get('project', 'routes'))
-    mapper = module.mapper()
-
-    sys.modules[__name__].mapper = lambda: mapper
-    sys.modules[__name__].url = mapper.url
+module = import_path(settings.ROUTES)
+mapper = module.mapper()
