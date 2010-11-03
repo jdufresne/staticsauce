@@ -17,3 +17,16 @@ try:
     import settings
 except ImportError:
     settings = None
+
+from utils import import_path
+
+if settings is not None:
+    for module in settings.MODULES:
+        module_name = module.rsplit('.', 1)[-1]
+        if not hasattr(settings, module_name):
+            try:
+                module_settings = import_path(module, 'settings')
+            except ImportError:
+                pass
+            else:
+                setattr(settings, module_name, module_settings)
