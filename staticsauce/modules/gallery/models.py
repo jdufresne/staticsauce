@@ -20,7 +20,7 @@ from staticsauce.utils import import_path
 
 def albums():
     module = import_path('data.gallery')
-    return module.albums
+    return sorted(module.albums, key=lambda album: album.date, reverse=True)
 
 
 def album(slug):
