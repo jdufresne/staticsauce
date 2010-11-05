@@ -45,6 +45,12 @@ class Jinja2TemplateRenderer(TemplateRenderer):
 
 @jinja2.evalcontextfilter
 def paragraphs(eval_ctx, value):
+    if value:
+        value = value.strip()
+
+    if not value:
+        return ''
+
     paragraph_re = re.compile(r'(?:\r\n|\r|\n){2,}')
     result = ''.join(
         '<p>{p}</p>'.format(p=paragraph.strip())
