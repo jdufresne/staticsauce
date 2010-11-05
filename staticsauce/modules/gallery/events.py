@@ -64,14 +64,11 @@ def preprocess():
         os.mkdir(album_dir)
         os.mkdir(thumbnail_dir)
 
-        for index, filename in enumerate(sorted(os.listdir(album_data_dir))):
-            print "processing %s" % filename
+        for photo in album.photos:
+            print "processing %s" % photo.filename
 
-            image = Image.open(os.path.join(album_data_dir, filename))
-            filename = '{album}{index}.jpeg'.format(
-                album=album.slug,
-                index=index
-            )
+            image = Image.open(os.path.join(album_data_dir, photo.filename))
+            filename = '{slug}.jpeg'.format(slug=photo.slug)
 
             scaled_image = resize(image, image_size)
             scaled_image.save(
