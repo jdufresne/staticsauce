@@ -15,16 +15,27 @@
 
 
 import sys
+import os
 import re
 import jinja2
 from staticsauce import routes
 from staticsauce.conf import settings
+from staticsauce.utils import import_path
 from staticsauce.templating.templaterenderer import TemplateRenderer
 
 
 class Jinja2TemplateRenderer(TemplateRenderer):
     def __init__(self):
-        loader = jinja2.FileSystemLoader(settings.TEMPLATE_DIR)
+        search_path = [
+            os.path.join(
+                os.path.abspath(os.path.dirname(import_path(module).__file__)),
+                'templates'
+            )
+            for module in settings.MODULES
+        ]
+        search_path.insert(0, settings.TEMPLATE_DIR)
+        loader = jinja2.FileSystemLoader(search_path)
+
         self.env = jinja2.Environment(loader=loader)
         self.env.globals = {
             'AUTHOR': settings.AUTHOR,
@@ -35,6 +46,10 @@ class Jinja2TemplateRenderer(TemplateRenderer):
 
         self.env.filters['paragraphs'] = paragraphs
         self.env.filters['strftime'] = strftime
+
+        for module in settings.MODULES:
+            module = import_path(module, 'templating')
+            self.env.globals.update(module.context_processor())
 
     def render(self, template, context=None):
         if context is None:

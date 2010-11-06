@@ -1,0 +1,7 @@
+<ul class="nav">
+  {% for item in menu.items %}
+  <li{% if item.route == active %} class="active"{% endif %}>
+    <a href="{{ url(item.route) }}">{{ item.label }}</a>
+  </li>
+  {% endfor %}
+</ul>

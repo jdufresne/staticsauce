@@ -41,6 +41,7 @@ if __name__ == '__main__':
             'staticsauce.controllers',
             'staticsauce.modules',
             'staticsauce.modules.gallery',
+            'staticsauce.modules.nav',
             'staticsauce.templating',
         ],
         package_dir={'staticsauce': 'staticsauce'},
@@ -53,6 +54,7 @@ if __name__ == '__main__':
                 'data/init/public/styles/project.css',
                 'data/init/templates/base.html',
                 'data/init/templates/index.html',
+                'modules/nav/templates/nav/nav.html',
             ]
         },
         scripts=['scripts/staticsauce'],

@@ -14,21 +14,17 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import errno
-import shutil
-from staticsauce.conf import settings
-from staticsauce.utils import import_path
+from staticsauce.templating import inclusiontag
+from staticsauce.modules.nav.models import menus
 
 
-def preprocess():
-    try:
-        shutil.rmtree(settings.BUILD_DIR)
-    except OSError as e:
-        if e.errno != errno.ENOENT:
-            raise
-    shutil.copytree(settings.PUBLIC_DIR, settings.BUILD_DIR)
+def context_processor():
+    return {
+        'menus': menus(),
+        'nav': nav,
+    }
 
-    for module in settings.MODULES:
-        print "preprocess", module
-        module = import_path(module, 'events')
-        module.preprocess()
+
+@inclusiontag('/nav/nav.html')
+def nav(menu):
+    return {'menu': menu}

@@ -14,21 +14,5 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import errno
-import shutil
-from staticsauce.conf import settings
-from staticsauce.utils import import_path
-
-
-def preprocess():
-    try:
-        shutil.rmtree(settings.BUILD_DIR)
-    except OSError as e:
-        if e.errno != errno.ENOENT:
-            raise
-    shutil.copytree(settings.PUBLIC_DIR, settings.BUILD_DIR)
-
-    for module in settings.MODULES:
-        print "preprocess", module
-        module = import_path(module, 'events')
-        module.preprocess()
+def context_processor():
+    return {}

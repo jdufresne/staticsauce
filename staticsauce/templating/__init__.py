@@ -14,7 +14,18 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import functools
 from staticsauce.templating.jinja2templaterenderer import Jinja2TemplateRenderer
+
+
+def inclusiontag(template):
+    def decorator(func):
+        @functools.wraps(func)
+        def new_func(*args, **kwargs):
+            context = func(*args, **kwargs)
+            return render(template, context)
+        return new_func
+    return decorator
 
 
 renderer = Jinja2TemplateRenderer()
