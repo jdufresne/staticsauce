@@ -42,7 +42,6 @@ if __name__ == '__main__':
             'staticsauce.modules',
             'staticsauce.modules.gallery',
             'staticsauce.modules.nav',
-            'staticsauce.templating',
         ],
         package_dir={'staticsauce': 'staticsauce'},
         package_data={

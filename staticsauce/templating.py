@@ -16,15 +16,15 @@
 
 import sys
 import os
+import functools
 import re
 import jinja2
 from staticsauce import routes
 from staticsauce.conf import settings
 from staticsauce.utils import import_path
-from staticsauce.templating.templaterenderer import TemplateRenderer
 
 
-class Jinja2TemplateRenderer(TemplateRenderer):
+class TemplateRenderer(object):
     def __init__(self):
         search_path = [
             os.path.join(
@@ -51,7 +51,6 @@ class Jinja2TemplateRenderer(TemplateRenderer):
 
         self.env.filters.update({
             'paragraphs': paragraphs,
-            'strftime': strftime,
         })
 
         for module in settings.MODULES:
@@ -66,22 +65,32 @@ class Jinja2TemplateRenderer(TemplateRenderer):
 
 
 @jinja2.evalcontextfilter
-def paragraphs(eval_ctx, value):
+def paragraphs(eval_ctx, value, _re=re.compile(r'(?:\r\n|\r|\n){2,}')):
     if value:
         value = value.strip()
 
     if not value:
         return ''
 
-    paragraph_re = re.compile(r'(?:\r\n|\r|\n){2,}')
     result = ''.join(
         '<p>{p}</p>'.format(p=paragraph.strip())
-        for paragraph in paragraph_re.split(jinja2.escape(value))
+        for paragraph in _re.split(jinja2.escape(value))
     )
+
     if eval_ctx.autoescape:
         result = jinja2.Markup(result)
     return result
 
 
-def strftime(value):
-    return datetime.strftime('%Y-%m-%dT%H:%M:%SZ')
+def inclusiontag(template):
+    def decorator(func):
+        @functools.wraps(func)
+        def new_func(*args, **kwargs):
+            context = func(*args, **kwargs)
+            return jinja2.Markup(render(template, context))
+        return new_func
+    return decorator
+
+
+renderer = TemplateRenderer()
+render = renderer.render

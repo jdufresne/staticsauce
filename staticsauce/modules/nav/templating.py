@@ -26,5 +26,8 @@ def context_processor():
 
 
 @inclusiontag('/nav/nav.html')
-def nav(menu):
-    return {'menu': menu}
+def nav(menu, active):
+    return {
+        'menu': menu,
+        'active': active,
+    }
