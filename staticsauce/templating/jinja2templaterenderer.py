@@ -36,16 +36,23 @@ class Jinja2TemplateRenderer(TemplateRenderer):
         search_path.insert(0, settings.TEMPLATE_DIR)
         loader = jinja2.FileSystemLoader(search_path)
 
-        self.env = jinja2.Environment(loader=loader)
-        self.env.globals = {
+        self.env = jinja2.Environment(
+            trim_blocks=True,
+            autoescape=True,
+            loader=loader
+        )
+
+        self.env.globals.update({
             'AUTHOR': settings.AUTHOR,
             'AUTHOR_EMAIL': settings.AUTHOR_EMAIL,
             'SITE_ROOT': settings.SITE_ROOT,
             'url': routes.mapper.url,
-        }
+        })
 
-        self.env.filters['paragraphs'] = paragraphs
-        self.env.filters['strftime'] = strftime
+        self.env.filters.update({
+            'paragraphs': paragraphs,
+            'strftime': strftime,
+        })
 
         for module in settings.MODULES:
             module = import_path(module, 'templating')

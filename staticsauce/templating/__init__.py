@@ -15,6 +15,7 @@
 
 
 import functools
+import jinja2
 from staticsauce.templating.jinja2templaterenderer import Jinja2TemplateRenderer
 
 
@@ -23,7 +24,7 @@ def inclusiontag(template):
         @functools.wraps(func)
         def new_func(*args, **kwargs):
             context = func(*args, **kwargs)
-            return render(template, context)
+            return jinja2.Markup(render(template, context))
         return new_func
     return decorator
 
