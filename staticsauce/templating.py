@@ -64,30 +64,49 @@ class TemplateRenderer(object):
         return template.render(context)
 
 
-@jinja2.evalcontextfilter
-def paragraphs(eval_ctx, value, _re=re.compile(r'(?:\r\n|\r|\n){2,}')):
+def autoescapefilter(func):
+    @jinja2.evalcontextfilter
+    @functools.wraps(func)
+    def new_func(eval_ctx, *args, **kwargs):
+        result = func(*args, **kwargs)
+        if eval_ctx.autoescape:
+            result = jinja2.Markup(result)
+        return result
+    return new_func
+
+
+def autoescapefunction(func):
+    @jinja2.evalcontextfunction
+    @functools.wraps(func)
+    def new_func(eval_ctx, *args, **kwargs):
+        result = func(*args, **kwargs)
+        if eval_ctx.autoescape:
+            result = jinja2.Markup(result)
+        return result
+    return new_func
+
+
+@autoescapefilter
+def paragraphs(value, _re=re.compile(r'(?:\r\n|\r|\n){2,}')):
     if value:
         value = value.strip()
 
     if not value:
         return ''
 
-    result = ''.join(
+    return '\n'.join(
         '<p>{p}</p>'.format(p=paragraph.strip())
         for paragraph in _re.split(jinja2.escape(value))
     )
 
-    if eval_ctx.autoescape:
-        result = jinja2.Markup(result)
-    return result
-
 
 def inclusiontag(template):
     def decorator(func):
+        @autoescapefunction
         @functools.wraps(func)
         def new_func(*args, **kwargs):
             context = func(*args, **kwargs)
-            return jinja2.Markup(render(template, context))
+            return render(template, context)
         return new_func
     return decorator
 
