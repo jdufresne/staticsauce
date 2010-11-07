@@ -18,29 +18,30 @@ import os
 import datetime
 from PIL import Image
 from staticsauce.conf import settings
+from staticsauce.files import HTMLFile, JPEGFile
 from staticsauce.templating import render
 from staticsauce.modules.gallery import models
 
 
 def albums():
-    return render('/gallery/albums.html', {'albums': models.albums()})
+    return HTMLFile(render('/gallery/albums.html', {'albums': models.albums()}))
 
 
 def album(slug):
     album = models.album(slug)
-    return render('/gallery/album.html', {'album': album})
+    return HTMLFile(render('/gallery/album.html', {'album': album}))
 
 
 def photo(album_slug, slug):
     album = models.album(album_slug)
     photo = album.photo(slug)
-    return render('/gallery/photo.html', {'photo': photo})
+    return HTMLFile(render('/gallery/photo.html', {'photo': photo}))
 
 
 def image(album_slug, slug):
     album = models.album(album_slug)
     photo = album.photo(slug)
-    _preprocess_image(
+    return JPEGFile(_preprocess_image(
         os.path.join(
             settings.DATA_DIR,
             'gallery',
@@ -48,21 +49,14 @@ def image(album_slug, slug):
             album_slug,
             photo.filename
         ),
-        os.path.join(
-            settings.BUILD_DIR,
-            'images',
-            'gallery',
-            album_slug,
-            '{slug}.jpeg'.format(slug=photo.slug)
-        ),
         (settings.gallery.IMAGE_WIDTH, settings.gallery.IMAGE_HEIGHT)
-    )
+    ))
 
 
 def thumbnail(album_slug, slug):
     album = models.album(album_slug)
     photo = album.photo(slug)
-    _preprocess_image(
+    return JPEGFile(_preprocess_image(
         os.path.join(
             settings.DATA_DIR,
             'gallery',
@@ -70,36 +64,17 @@ def thumbnail(album_slug, slug):
             album_slug,
             photo.filename
         ),
-        os.path.join(
-            settings.BUILD_DIR,
-            'images',
-            'gallery',
-            album_slug,
-            'thumbnails',
-            '{slug}.jpeg'.format(slug=photo.slug)
-        ),
         (settings.gallery.THUMBNAIL_WIDTH, settings.gallery.THUMBNAIL_HEIGHT),
         settings.gallery.CROP_THUMBNAIL
-    )
+    ))
 
 
-def feed():
-    albums = albums=models.albums()
-    most_recent = min(albums, key=lambda x: x.date) \
-        if albums else datetime.datetime.now()
-    updated = most_recent.date
-    return render('/gallery/feed.xml', {
-        'updated': updated,
-        'albums': albums,
-    })
-
-
-def _preprocess_image(src, dest, size, crop=False):
+def _preprocess_image(src, size, crop=False):
     image = Image.open(src)
     scaled_image = _resize(image, size, not crop)
     if crop:
         scaled_image = _crop_center(scaled_image, size)
-    scaled_image.save(dest, 'JPEG', quality=settings.gallery.QUALITY)
+    return scaled_image
 
 
 def _resize(image, size, max=True):

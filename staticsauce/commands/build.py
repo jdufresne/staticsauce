@@ -37,7 +37,14 @@ class BuildCommand(commands.Command):
                 raise
         shutil.copytree(settings.PUBLIC_DIR, settings.BUILD_DIR)
 
-        for route in routes.mapper:
+        for name, route in routes.mapper:
+            logging.info('building route %(route)s', {
+                'route': name,
+            })
+            logging.info('using controller %(controller)s', {
+                'controller': route.controller,
+            })
+
             filename = path_append(settings.BUILD_DIR, route.filename)
             module, controller = route.controller.rsplit('.', 1)
             module = import_path(module)
@@ -61,8 +68,4 @@ class BuildCommand(commands.Command):
                 kwargs = {}
                 kwargs.update(route.kwargs)
                 kwargs.update(permutation)
-                contents = controller(**kwargs)
-
-                if contents:
-                    with open(fmt_filename, 'w') as f:
-                        f.write(contents)
+                controller(**kwargs).save(fmt_filename)

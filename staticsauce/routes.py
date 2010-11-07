@@ -45,7 +45,7 @@ class RouteMapper(object):
         module = import_path(path)
         mapper = module.mapper()
 
-        for name, route in mapper.routes():
+        for name, route in mapper:
             filename = route.filename
             if prefix is not None:
                 filename = path_append(prefix, filename)
@@ -57,11 +57,8 @@ class RouteMapper(object):
                 **route.kwargs
             )
 
-    def routes(self):
-        return iter(self._routes.items())
-
     def __iter__(self):
-        return iter(self._routes.values())
+        return iter(self._routes.items())
 
     def url(self, name, **kwargs):
         return path_append(

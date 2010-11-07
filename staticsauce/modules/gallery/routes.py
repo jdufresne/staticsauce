@@ -55,9 +55,4 @@ def mapper():
         'staticsauce.modules.gallery.controllers.thumbnail',
         permutations=photo_permutations
     )
-    mapper.add(
-        'feed',
-        '/feeds/gallery.xml',
-        'staticsauce.modules.gallery.controllers.feed'
-    )
     return mapper

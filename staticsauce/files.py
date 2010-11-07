@@ -14,9 +14,26 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from staticsauce.files import HTMLFile
-from staticsauce.templating import render
+from staticsauce.conf import settings
 
 
-def direct_to_file(template, context=None):
-    return HTMLFile(render(template, context))
+class StaticFile(object):
+    def save(filename):
+        raise NotImplementedError
+
+
+class HTMLFile(StaticFile):
+    def __init__(self, contents):
+        self.contents = contents
+
+    def save(self, filename):
+        with open(filename, 'w') as f:
+            f.write(self.contents)
+
+
+class JPEGFile(StaticFile):
+    def __init__(self, image):
+        self.image = image
+
+    def save(self, filename):
+        self.image.save(filename, 'JPEG', quality=settings.gallery.QUALITY)
