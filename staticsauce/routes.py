@@ -58,10 +58,10 @@ class RouteMapper(object):
             )
 
     def routes(self):
-        return self._routes.iteritems()
+        return iter(self._routes.items())
 
     def __iter__(self):
-        return self._routes.itervalues()
+        return iter(self._routes.values())
 
     def url(self, name, **kwargs):
         return path_append(

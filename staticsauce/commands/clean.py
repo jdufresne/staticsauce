@@ -22,8 +22,7 @@ class CleanCommand(commands.Command):
     command = 'clean'
 
     def __call__(self):
-        print "cleaning {build_dir}".format(build_dir=settings.BUILD_DIR)
-
+        print("cleaning {build_dir}".format(build_dir=settings.BUILD_DIR))
         try:
             shutil.rmtree(settings.BUILD_DIR)
         except OSError as e:

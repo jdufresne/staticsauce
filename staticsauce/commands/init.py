@@ -28,7 +28,7 @@ class InitCommand(commands.Command):
         parser.add_argument('name')
 
     def __call__(self, name):
-        print "initializing project {name}".format(name=name)
+        print("initializing project {name}".format(name=name))
 
         # cp -r staticsauce/data/init name
         shutil.copytree(

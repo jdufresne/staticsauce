@@ -15,7 +15,7 @@
 
 
 import sys
-from utils import import_path
+from staticsauce.utils import import_path
 
 
 try:
