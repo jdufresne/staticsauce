@@ -17,49 +17,52 @@
 import os
 import errno
 import logging
-from staticsauce import routes
+import shutil
 from staticsauce import commands
+from staticsauce import routes
 from staticsauce.conf import settings
-from staticsauce.events import preprocess
-from staticsauce.utils import path_append, import_path
+from staticsauce.utils import import_path, path_append
 
 
 class BuildCommand(commands.Command):
     command = 'build'
 
     def __call__(self):
-        preprocess()
-
         logging.info("building")
+
+        try:
+            shutil.rmtree(settings.BUILD_DIR)
+        except OSError as e:
+            if e.errno != errno.ENOENT:
+                raise
+        shutil.copytree(settings.PUBLIC_DIR, settings.BUILD_DIR)
+
         for route in routes.mapper:
             filename = path_append(settings.BUILD_DIR, route.filename)
             module, controller = route.controller.rsplit('.', 1)
             module = import_path(module)
             controller = getattr(module, controller)
 
-            if route.permutations is not None:
-                for permutation in route.permutations:
-                    fmt_filename = filename.format(**permutation)
+            permutations = route.permutations \
+                if route.permutations is not None else [{}]
 
-                    try:
-                        os.makedirs(os.path.dirname(fmt_filename))
-                    except OSError as e:
-                        if e.errno != errno.EEXIST:
-                            raise
+            for permutation in permutations:
+                fmt_filename = filename.format(**permutation)
+                logging.info("building %(filename)s", {
+                    'filename': fmt_filename,
+                })
 
-                    with open(fmt_filename, 'w') as f:
-                        kwargs = {}
-                        kwargs.update(route.kwargs)
-                        kwargs.update(permutation)
-                        f.write(controller(**kwargs))
-            else:
                 try:
-                    os.makedirs(os.path.dirname(filename))
+                    os.makedirs(os.path.dirname(fmt_filename))
                 except OSError as e:
                     if e.errno != errno.EEXIST:
                         raise
 
-                with open(filename, 'w') as f:
-                    kwargs = {}
-                    kwargs.update(route.kwargs)
-                    f.write(controller(**kwargs))
+                kwargs = {}
+                kwargs.update(route.kwargs)
+                kwargs.update(permutation)
+                contents = controller(**kwargs)
+
+                if contents:
+                    with open(fmt_filename, 'w') as f:
+                        f.write(contents)

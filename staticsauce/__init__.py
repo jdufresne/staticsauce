@@ -61,4 +61,4 @@ def main():
     try:
         _main()
     except Exception as e:
-        logging.exception(e.message)
+        logging.exception(str(e))

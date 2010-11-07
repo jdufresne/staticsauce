@@ -21,6 +21,11 @@ from staticsauce.modules.gallery import models
 def mapper():
     mapper = RouteMapper()
     albums = models.albums()
+    photo_permutations = [
+        {'album_slug': album.slug, 'slug': photo.slug}
+        for album in albums for photo in album.photos
+    ]
+
     mapper.add(
         'albums',
         '/albums.html',
@@ -36,10 +41,19 @@ def mapper():
         'photo',
         '/albums/{album_slug}/{slug}.html',
         controller='staticsauce.modules.gallery.controllers.photo',
-        permutations=[
-            {'album_slug': album.slug, 'slug': photo.slug}
-            for album in albums for photo in album.photos
-        ]
+        permutations=photo_permutations
+    )
+    mapper.add(
+        'image',
+        '/images/gallery/{album_slug}/{slug}.jpeg',
+        'staticsauce.modules.gallery.controllers.image',
+        permutations=photo_permutations
+    )
+    mapper.add(
+        'thumbnail',
+        '/images/gallery/{album_slug}/thumbnails/{slug}.jpeg',
+        'staticsauce.modules.gallery.controllers.thumbnail',
+        permutations=photo_permutations
     )
     mapper.add(
         'feed',
