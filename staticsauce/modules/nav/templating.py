@@ -25,11 +25,6 @@ def context_processor():
     }
 
 
-# @contextfunction
-# def active_menu_item(ctx, menu, item):
-#    return ''
-
-
 @inclusiontag('/nav/nav.html')
 def nav(menu, active):
     return {

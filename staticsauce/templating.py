@@ -38,6 +38,7 @@ class TemplateRenderer(object):
 
         self.env = jinja2.Environment(
             trim_blocks=True,
+            undefined=jinja2.StrictUndefined,
             autoescape=True,
             loader=loader
         )
