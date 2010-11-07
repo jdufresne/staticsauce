@@ -44,14 +44,6 @@ class Album(object):
             if photo.cover:
                 self.cover = photo
 
-    def images(self):
-        url = '{site_root}/images/gallery/{slug}'
-        return url.format(site_root=settings.SITE_ROOT, slug=self.slug)
-
-    def thumbnails(self):
-        url = '{images}/thumbnails'
-        return url.format(images=self.images())
-
     def photo(self, photo_slug):
         for photo in self.photos:
             if photo.slug == photo_slug:
@@ -66,14 +58,6 @@ class Photo(object):
         self.description = description
         self.cover = cover
         self.album = None
-
-    def image(self):
-        url = '{images}/{slug}.jpeg'
-        return url.format(images=self.album.images(), slug=self.slug)
-
-    def thumbnail(self):
-        url = '{thumbnails}/{slug}.jpeg'
-        return url.format(thumbnails=self.album.thumbnails(), slug=self.slug)
 
     def prev(self):
         index = self.album.photos.index(self)
