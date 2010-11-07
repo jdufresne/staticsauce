@@ -25,9 +25,9 @@ class CleanCommand(commands.Command):
     command = 'clean'
 
     def __call__(self):
-        logging.info("cleaning {build_dir}".format(
-            build_dir=settings.BUILD_DIR
-        ))
+        logging.info("cleaning %(build_dir)s", {
+            'build_dir': settings.BUILD_DIR,
+        })
 
         try:
             shutil.rmtree(settings.BUILD_DIR)

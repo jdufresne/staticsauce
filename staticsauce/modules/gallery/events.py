@@ -66,9 +66,9 @@ def preprocess():
         os.mkdir(thumbnail_dir)
 
         for photo in album.photos:
-            logging.info("processing {filename}".format(
-                filename=photo.filename
-            ))
+            logging.info("processing %(filename)s", {
+                'filename': photo.filename,
+            })
 
             image = Image.open(os.path.join(album_data_dir, photo.filename))
             filename = '{slug}.jpeg'.format(slug=photo.slug)
@@ -80,11 +80,11 @@ def preprocess():
                 quality=settings.gallery.QUALITY,
             )
 
-            logging.info("scaled {filename} {size} -> {scaled_size}".format(
-                filename=filename,
-                size=image.size,
-                scaled_size=scaled_image.size,
-            ))
+            logging.info("scaled %(filename)s %(size)s -> %(scaled_size)s", {
+                'filename': filename,
+                'size': image.size,
+                'scaled_size': scaled_image.size,
+            })
 
             scaled_image = resize(
                 image,
@@ -101,8 +101,8 @@ def preprocess():
                 quality=settings.gallery.QUALITY,
             )
 
-            logging.info("scaled {filename} {size} -> {scaled_size}".format(
-                filename=filename,
-                size=image.size,
-                scaled_size=scaled_image.size,
-            ))
+            logging.info("scaled %(filename)s %(size)s -> %(scaled_size)s", {
+                'filename': filename,
+                'size': image.size,
+                'scaled_size': scaled_image.size,
+            })

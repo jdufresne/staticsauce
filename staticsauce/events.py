@@ -30,7 +30,9 @@ def preprocess():
     shutil.copytree(settings.PUBLIC_DIR, settings.BUILD_DIR)
 
     for module in settings.MODULES:
-        logging.info("preprocess {module}".format(module=module))
+        logging.info("preprocess %(module)s", {
+            'module': module,
+        })
         module = import_path(module, 'events', always_fail=False)
         if module:
             module.preprocess()

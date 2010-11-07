@@ -30,7 +30,7 @@ class BuildCommand(commands.Command):
     def __call__(self):
         preprocess()
 
-        logging.info('building')
+        logging.info("building")
         for route in routes.mapper:
             filename = path_append(settings.BUILD_DIR, route.filename)
             module, controller = route.controller.rsplit('.', 1)
