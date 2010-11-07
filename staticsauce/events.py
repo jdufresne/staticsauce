@@ -30,5 +30,6 @@ def preprocess():
 
     for module in settings.MODULES:
         print "preprocess", module
-        module = import_path(module, 'events')
-        module.preprocess()
+        module = import_path(module, 'events', always_fail=False)
+        if module:
+            module.preprocess()

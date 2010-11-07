@@ -14,15 +14,30 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import sys
 import os
 
 
-def import_path(*args):
+def import_path(*args, **kwargs):
     path = '.'.join(args)
-    module = __import__(path)
-    components = path.split('.')
-    for component in components[1:]:
-        module = getattr(module, component)
+    try:
+        module = __import__(path, None, None, None, 0)
+    except ImportError as e:
+        try:
+            always_fail = kwargs['always_fail']
+        except KeyError:
+            always_fail = True
+        try:
+            type, value, tb = sys.exc_info()
+            if tb.tb_next or always_fail:
+                raise e
+        finally:
+            del tb
+        module = None
+    else:
+        components = path.split('.')
+        for component in components[1:]:
+            module = getattr(module, component)
     return module
 
 

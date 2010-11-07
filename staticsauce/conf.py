@@ -13,20 +13,27 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+
+import sys
+from utils import import_path
+
+
 try:
     import settings
 except ImportError:
+    type, value, tb = sys.exc_info()
+    try:
+        if tb.tb_next:
+            raise
+    finally:
+        del tb
     settings = None
-
-from utils import import_path
 
 if settings is not None:
     for module in settings.MODULES:
-        module_name = module.rsplit('.', 1)[-1]
+        module_parts = module.rsplit('.', 1)
+        module_name = module_parts[-1]
         if not hasattr(settings, module_name):
-            try:
-                module_settings = import_path(module, 'settings')
-            except ImportError:
-                pass
-            else:
+            module = import_path(module, 'settings', always_fail=False)
+            if module:
                 setattr(settings, module_name, module_settings)

@@ -26,14 +26,14 @@ from staticsauce.utils import import_path
 
 class TemplateRenderer(object):
     def __init__(self):
-        search_path = [
-            os.path.join(
+        search_path = [settings.TEMPLATE_DIR]
+        for module in settings.MODULES:
+            path = os.path.join(
                 os.path.abspath(os.path.dirname(import_path(module).__file__)),
                 'templates'
             )
-            for module in settings.MODULES
-        ]
-        search_path.insert(0, settings.TEMPLATE_DIR)
+            if os.path.isdir(path):
+                search_path.append(path)
         loader = jinja2.FileSystemLoader(search_path)
 
         self.env = jinja2.Environment(
@@ -55,8 +55,9 @@ class TemplateRenderer(object):
         })
 
         for module in settings.MODULES:
-            module = import_path(module, 'templating')
-            self.env.globals.update(module.context_processor())
+            module = import_path(module, 'templating', always_fail=False)
+            if module:
+                self.env.globals.update(module.context_processor())
 
     def render(self, template, context=None):
         if context is None:
@@ -95,7 +96,7 @@ def paragraphs(value, _re=re.compile(r'(?:\r\n|\r|\n){2,}')):
     if not value:
         return ''
 
-    return '\n'.join(
+    return ''.join(
         '<p>{p}</p>'.format(p=paragraph.strip())
         for paragraph in _re.split(jinja2.escape(value))
     )
