@@ -15,6 +15,7 @@
 
 
 import os
+import logging
 from PIL import Image
 from staticsauce.conf import settings
 from staticsauce.modules.gallery import models
@@ -65,7 +66,9 @@ def preprocess():
         os.mkdir(thumbnail_dir)
 
         for photo in album.photos:
-            print("processing {filename}".format(filename=photo.filename))
+            logging.info("processing {filename}".format(
+                filename=photo.filename
+            ))
 
             image = Image.open(os.path.join(album_data_dir, photo.filename))
             filename = '{slug}.jpeg'.format(slug=photo.slug)
@@ -76,7 +79,8 @@ def preprocess():
                 'JPEG',
                 quality=settings.gallery.QUALITY,
             )
-            print("scaled {filename} {size} -> {scaled_size}".format(
+
+            logging.info("scaled {filename} {size} -> {scaled_size}".format(
                 filename=filename,
                 size=image.size,
                 scaled_size=scaled_image.size,
@@ -96,7 +100,8 @@ def preprocess():
                 'JPEG',
                 quality=settings.gallery.QUALITY,
             )
-            print("scaled {filename} {size} -> {scaled_size}".format(
+
+            logging.info("scaled {filename} {size} -> {scaled_size}".format(
                 filename=filename,
                 size=image.size,
                 scaled_size=scaled_image.size,

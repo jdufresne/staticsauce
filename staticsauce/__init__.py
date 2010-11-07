@@ -14,8 +14,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import os
 import sys
+import os
 
 if os.path.exists(os.path.join(os.getcwd(), 'settings.py')):
     sys.path.insert(0, os.getcwd())
@@ -23,11 +23,12 @@ if os.path.exists(os.path.join(os.getcwd(), 'settings.py')):
 import argparse
 import glob
 import inspect
+import logging
 from staticsauce import commands
 from staticsauce.utils import import_path
 
 
-def main():
+def _main():
     parser = argparse.ArgumentParser()
     subparsers = parser.add_subparsers()
 
@@ -53,3 +54,11 @@ def main():
     }
     command = args._command
     command(**kwargs)
+
+
+def main():
+    logging.basicConfig(level=logging.DEBUG)
+    try:
+        _main()
+    except Exception as e:
+        logging.exception(e.message)

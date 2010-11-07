@@ -13,16 +13,22 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import shutil
+
 import errno
+import logging
+import shutil
 from staticsauce import commands
 from staticsauce.conf import settings
+
 
 class CleanCommand(commands.Command):
     command = 'clean'
 
     def __call__(self):
-        print("cleaning {build_dir}".format(build_dir=settings.BUILD_DIR))
+        logging.info("cleaning {build_dir}".format(
+            build_dir=settings.BUILD_DIR
+        ))
+
         try:
             shutil.rmtree(settings.BUILD_DIR)
         except OSError as e:

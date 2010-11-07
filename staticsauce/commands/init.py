@@ -15,6 +15,7 @@
 
 
 import os
+import logging
 import shutil
 import tempfile
 import staticsauce
@@ -28,7 +29,7 @@ class InitCommand(commands.Command):
         parser.add_argument('name')
 
     def __call__(self, name):
-        print("initializing project {name}".format(name=name))
+        logging.info("initializing project {name}".format(name=name))
 
         # cp -r staticsauce/data/init name
         shutil.copytree(
