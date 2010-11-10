@@ -58,7 +58,8 @@ def _main():
 
 def main():
     logging.basicConfig(level=logging.DEBUG)
+    logger = logging.getLogger('staticsauce')
     try:
         _main()
     except Exception as e:
-        logging.exception(str(e))
+        logger.exception(str(e))

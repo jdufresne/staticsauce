@@ -15,7 +15,6 @@
 
 
 import os
-import logging
 import shutil
 import tempfile
 import staticsauce
@@ -29,7 +28,7 @@ class InitCommand(commands.Command):
         parser.add_argument('name')
 
     def __call__(self, name):
-        logging.info("initializing project %(name)s", {
+        self.logger.info("initializing project %(name)s", {
             'name': name
         })
 

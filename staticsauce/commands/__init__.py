@@ -14,6 +14,12 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import logging
+
+
 class Command(object):
+    def __init__(self):
+        self.logger = logging.getLogger('.'.join(['staticsauce', self.command]))
+
     def init_parser(self, parser):
         pass

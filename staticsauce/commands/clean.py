@@ -15,7 +15,6 @@
 
 
 import errno
-import logging
 import shutil
 from staticsauce import commands
 from staticsauce.conf import settings
@@ -25,7 +24,7 @@ class CleanCommand(commands.Command):
     command = 'clean'
 
     def __call__(self):
-        logging.info("cleaning %(build_dir)s", {
+        self.logger.info("cleaning %(build_dir)s", {
             'build_dir': settings.BUILD_DIR,
         })
 

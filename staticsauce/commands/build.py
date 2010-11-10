@@ -16,7 +16,6 @@
 
 import os
 import errno
-import logging
 import shutil
 from staticsauce import commands
 from staticsauce import routes
@@ -28,7 +27,7 @@ class BuildCommand(commands.Command):
     command = 'build'
 
     def __call__(self):
-        logging.info("building")
+        self.logger.info("building")
 
         try:
             shutil.rmtree(settings.BUILD_DIR)
@@ -38,10 +37,10 @@ class BuildCommand(commands.Command):
         shutil.copytree(settings.PUBLIC_DIR, settings.BUILD_DIR)
 
         for name, route in routes.mapper:
-            logging.info('building route %(route)s', {
+            self.logger.info('building route %(route)s', {
                 'route': name,
             })
-            logging.info('using controller %(controller)s', {
+            self.logger.info('using controller %(controller)s', {
                 'controller': route.controller,
             })
 
@@ -55,7 +54,7 @@ class BuildCommand(commands.Command):
 
             for permutation in permutations:
                 fmt_filename = filename.format(**permutation)
-                logging.info("building %(filename)s", {
+                self.logger.info("building %(filename)s", {
                     'filename': fmt_filename,
                 })
 

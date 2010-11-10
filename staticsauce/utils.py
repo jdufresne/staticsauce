@@ -27,6 +27,7 @@ def import_path(*args, **kwargs):
             always_fail = kwargs['always_fail']
         except KeyError:
             always_fail = True
+
         try:
             type, value, tb = sys.exc_info()
             if tb.tb_next or always_fail:

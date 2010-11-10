@@ -36,4 +36,4 @@ if settings is not None:
         if not hasattr(settings, module_name):
             module = import_path(module, 'settings', always_fail=False)
             if module:
-                setattr(settings, module_name, module_settings)
+                setattr(settings, module_name, module)
