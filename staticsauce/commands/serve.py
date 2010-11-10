@@ -24,9 +24,13 @@ from staticsauce.conf import settings
 class StaticSauceRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     def do_GET(self):
         if self.path.startswith(settings.SITE_ROOT):
-            path = self.path[len(settings.SITE_ROOT):]
+            path = os.path.join(
+                settings.BUILD_DIR,
+                self.path[len(settings.SITE_ROOT) + 1:]
+            )
+            if os.path.isdir(path):
+                path = os.path.join(path, 'index.html')
             try:
-                path = os.path.join(settings.BUILD_DIR, path[1:])
                 with open(path) as f:
                     content = f.read()
             except IOError:
