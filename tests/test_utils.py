@@ -20,5 +20,4 @@ from staticsauce.utils import path_append
 
 class TestUtils(unittest.TestCase):
     def test_path_append(self):
-        path = path_append('/path1', '/path2')
-        self.assertEqual(path, '/path1/path2')
+        self.assertEqual(path_append('/path1', '/path2'), '/path1/path2')
