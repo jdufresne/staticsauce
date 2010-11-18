@@ -27,7 +27,7 @@ def album(slug):
     for album in albums():
         if album.slug == slug:
           return album
-    raise KeyError
+    raise KeyError(slug)
 
 
 class Album(object):
@@ -48,7 +48,7 @@ class Album(object):
         for photo in self.photos:
             if photo.slug == photo_slug:
                 return photo
-        raise KeyError
+        raise KeyError(photo_slug)
 
 
 class Photo(object):

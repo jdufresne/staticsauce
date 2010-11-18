@@ -40,6 +40,7 @@ if __name__ == '__main__':
             'staticsauce.commands',
             'staticsauce.controllers',
             'staticsauce.modules',
+            'staticsauce.modules.blog',
             'staticsauce.modules.gallery',
             'staticsauce.modules.nav',
         ],
