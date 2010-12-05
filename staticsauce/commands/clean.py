@@ -32,4 +32,4 @@ class CleanCommand(commands.Command):
             shutil.rmtree(settings.BUILD_DIR)
         except OSError as err:
             if err.errno != errno.ENOENT:
-                raise e
+                raise

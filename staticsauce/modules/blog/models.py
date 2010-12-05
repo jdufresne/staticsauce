@@ -22,7 +22,10 @@ from staticsauce.utils import import_path
 
 def articles():
     module = import_path('data.blog')
-    return sorted(module.articles, key=lambda article: article.date, reverse=True)
+    return sorted(
+        module.articles,
+        key=lambda article: article.date, reverse=True
+    )
 
 
 def article(slug):
