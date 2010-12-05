@@ -20,7 +20,7 @@ from distutils.core import setup
 
 
 NAME = 'staticsauce'
-VERSION = '0.4.1'
+VERSION = '0.4.2'
 URL = 'http://pypi.python.org/pypi/{name}'
 DOWNLOAD_URL = 'http://pypi.python.org/packages/source/s/{name}/{name}-{version}.tar.gz'
 
