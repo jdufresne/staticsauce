@@ -30,6 +30,6 @@ class CleanCommand(commands.Command):
 
         try:
             shutil.rmtree(settings.BUILD_DIR)
-        except OSError as e:
-            if e.errno != errno.ENOENT:
+        except OSError as err:
+            if err.errno != errno.ENOENT:
                 raise e

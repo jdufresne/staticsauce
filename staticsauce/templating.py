@@ -14,7 +14,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import sys
 import os
 import functools
 import re
@@ -113,5 +112,4 @@ def inclusiontag(template):
     return decorator
 
 
-renderer = TemplateRenderer()
-render = renderer.render
+render = TemplateRenderer().render

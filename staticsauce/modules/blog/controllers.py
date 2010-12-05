@@ -20,5 +20,6 @@ from staticsauce.modules.blog import models
 
 
 def article(slug):
-    article = models.article(slug)
-    return HTMLFile(render('/blog/article.html', {'article': article}))
+    return HTMLFile(render('/blog/article.html', {
+        'article': models.article(slug),
+    }))

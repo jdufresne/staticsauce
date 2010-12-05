@@ -18,8 +18,12 @@ import logging
 
 
 class Command(object):
+    command = None
+
     def __init__(self):
-        self.logger = logging.getLogger('.'.join(['staticsauce', self.command]))
+        self.logger = logging.getLogger(
+            '.'.join(('staticsauce', self.command))
+        )
 
     def init_parser(self, parser):
         pass

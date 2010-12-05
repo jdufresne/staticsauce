@@ -31,8 +31,8 @@ class BuildCommand(commands.Command):
 
         try:
             shutil.rmtree(settings.BUILD_DIR)
-        except OSError as e:
-            if e.errno != errno.ENOENT:
+        except OSError as err:
+            if err.errno != errno.ENOENT:
                 raise
         shutil.copytree(settings.PUBLIC_DIR, settings.BUILD_DIR)
 
@@ -60,8 +60,8 @@ class BuildCommand(commands.Command):
 
                 try:
                     os.makedirs(os.path.dirname(fmt_filename))
-                except OSError as e:
-                    if e.errno != errno.EEXIST:
+                except OSError as err:
+                    if err.errno != errno.EEXIST:
                         raise
 
                 kwargs = {}

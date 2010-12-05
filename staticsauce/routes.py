@@ -14,7 +14,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import sys
 from staticsauce.conf import settings
 from staticsauce.utils import path_append, import_path
 
@@ -68,5 +67,4 @@ class RouteMapper(object):
 
 
 if settings is not None:
-    module = import_path(settings.ROUTES)
-    mapper = module.mapper()
+    mapper = import_path(settings.ROUTES).mapper()

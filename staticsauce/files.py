@@ -18,12 +18,13 @@ from staticsauce.conf import settings
 
 
 class StaticFile(object):
-    def save(filename):
+    def save(self, filename):
         raise NotImplementedError
 
 
 class HTMLFile(StaticFile):
     def __init__(self, contents):
+        super(HTMLFile, self).__init__()
         self.contents = contents
 
     def save(self, filename):
@@ -33,6 +34,7 @@ class HTMLFile(StaticFile):
 
 class JPEGFile(StaticFile):
     def __init__(self, image):
+        super(JPEGFile, self).__init__()
         self.image = image
 
     def save(self, filename):

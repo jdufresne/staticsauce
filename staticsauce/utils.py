@@ -19,21 +19,18 @@ import os
 
 
 def import_path(*args, **kwargs):
+    try:
+        always_fail = kwargs['always_fail']
+    except KeyError:
+        always_fail = True
     path = '.'.join(args)
+
     try:
         module = __import__(path, None, None, None, 0)
-    except ImportError as e:
-        try:
-            always_fail = kwargs['always_fail']
-        except KeyError:
-            always_fail = True
-
-        try:
-            type, value, tb = sys.exc_info()
-            if tb.tb_next or always_fail:
-                raise e
-        finally:
-            del tb
+    except ImportError:
+        traceback = sys.exc_info()[2]
+        if always_fail or traceback.tb_next:
+            raise
         module = None
     else:
         components = path.split('.')

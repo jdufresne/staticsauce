@@ -21,13 +21,11 @@ from staticsauce.utils import import_path
 try:
     import settings
 except ImportError:
-    type, value, tb = sys.exc_info()
-    try:
-        if tb.tb_next:
-            raise
-    finally:
-        del tb
+    traceback = sys.exc_info()[2]
+    if traceback.tb_next:
+        raise
     settings = None
+
 
 if settings is not None:
     for module in settings.MODULES:

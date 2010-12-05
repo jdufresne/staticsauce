@@ -24,45 +24,44 @@ from staticsauce.modules.gallery import models
 
 
 def albums():
-    return HTMLFile(render('/gallery/albums.html', {'albums': models.albums()}))
+    return HTMLFile(render('/gallery/albums.html', {
+        'albums': models.albums(),
+    }))
 
 
 def album(slug):
-    album = models.album(slug)
-    return HTMLFile(render('/gallery/album.html', {'album': album}))
+    return HTMLFile(render('/gallery/album.html', {
+        'album': models.album(slug),
+    }))
 
 
 def photo(album_slug, slug):
-    album = models.album(album_slug)
-    photo = album.photo(slug)
-    return HTMLFile(render('/gallery/photo.html', {'photo': photo}))
+    return HTMLFile(render('/gallery/photo.html', {
+        'photo': models.album(album_slug).photo(slug),
+    }))
 
 
 def image(album_slug, slug):
-    album = models.album(album_slug)
-    photo = album.photo(slug)
     return JPEGFile(_preprocess_image(
         os.path.join(
             settings.DATA_DIR,
             'gallery',
             'images',
             album_slug,
-            photo.filename
+            models.album(album_slug).photo(slug).filename
         ),
         (settings.gallery.IMAGE_WIDTH, settings.gallery.IMAGE_HEIGHT)
     ))
 
 
 def thumbnail(album_slug, slug):
-    album = models.album(album_slug)
-    photo = album.photo(slug)
     return JPEGFile(_preprocess_image(
         os.path.join(
             settings.DATA_DIR,
             'gallery',
             'images',
             album_slug,
-            photo.filename
+            models.album(album_slug).photo(slug).filename
         ),
         (settings.gallery.THUMBNAIL_WIDTH, settings.gallery.THUMBNAIL_HEIGHT),
         settings.gallery.CROP_THUMBNAIL

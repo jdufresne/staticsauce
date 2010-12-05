@@ -28,7 +28,9 @@ from staticsauce import commands
 from staticsauce.utils import import_path
 
 
-def _main():
+def main():
+    logging.basicConfig(level=logging.DEBUG)
+
     parser = argparse.ArgumentParser()
     subparsers = parser.add_subparsers()
 
@@ -36,10 +38,8 @@ def _main():
 
     for filename in glob.iglob(os.path.join(commands_dir, '*.py')):
         filename = os.path.basename(filename)
-        module_name, ext = os.path.splitext(filename)
-
+        module_name = os.path.splitext(filename)[0]
         module = import_path('staticsauce', 'commands', module_name)
-
         for name, obj in inspect.getmembers(module, inspect.isclass):
             if issubclass(obj, commands.Command):
                 command = obj()
@@ -54,12 +54,3 @@ def _main():
     }
     command = args._command
     command(**kwargs)
-
-
-def main():
-    logging.basicConfig(level=logging.DEBUG)
-    logger = logging.getLogger('staticsauce')
-    try:
-        _main()
-    except Exception as e:
-        logger.exception(str(e))

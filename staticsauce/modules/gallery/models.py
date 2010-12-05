@@ -14,7 +14,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from staticsauce.conf import settings
 from staticsauce.utils import import_path
 
 
@@ -26,7 +25,7 @@ def albums():
 def album(slug):
     for album in albums():
         if album.slug == slug:
-          return album
+            return album
     raise KeyError(slug)
 
 
