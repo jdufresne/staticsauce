@@ -16,7 +16,9 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from distutils.core import setup
+import os
+import unittest
+import distutils.core
 
 
 NAME = 'staticsauce'
@@ -25,8 +27,23 @@ URL = 'http://pypi.python.org/pypi/{name}'
 DOWNLOAD_URL = 'http://pypi.python.org/packages/source/s/{name}/{name}-{version}.tar.gz'
 
 
+class TestCommand(distutils.core.Command):
+    user_options = []
+
+    def initialize_options(self):
+        pass
+
+    def finalize_options(self):
+        pass
+
+    def run(self):
+        path = os.path.abspath(os.path.dirname(__file__))
+        suite = unittest.TestLoader().discover(os.path.join(path, 'tests'))
+        unittest.TextTestRunner(verbosity=2).run(suite)
+
+
 if __name__ == '__main__':
-    setup(
+    distutils.core.setup(
         name=NAME,
         version=VERSION,
         description='Static Sauce Website Generator',
@@ -58,4 +75,5 @@ if __name__ == '__main__':
             ]
         },
         scripts=['scripts/staticsauce'],
+        cmdclass = {'test': TestCommand},
     )
