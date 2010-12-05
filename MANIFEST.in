@@ -1,2 +1,4 @@
 include INSTALL
 include LICENSE
+include runtests.py
+recursive-include tests *.py
