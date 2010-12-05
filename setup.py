@@ -30,7 +30,7 @@ if __name__ == '__main__':
         name=NAME,
         version=VERSION,
         description='Static Sauce Website Generator',
-        long_description=open('README').read(),
+        long_description=open('README.rst').read(),
         author='Jon Dufresne',
         author_email='jon.dufresne@gmail.com',
         url=URL.format(name=NAME),
