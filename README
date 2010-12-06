@@ -2,12 +2,16 @@
  Static Sauce
 ==============
 
+
+Introduction
+------------
+
 Static sauce is a static website generator. Pages are created using
 the jinja2_ template language.
 
 
-Dependencies
-============
+External dependencies
+---------------------
 
 Static sauce requires the following python modules installed to work
 properly:
