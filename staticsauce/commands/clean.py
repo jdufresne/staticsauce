@@ -24,10 +24,9 @@ class CleanCommand(commands.Command):
     command = 'clean'
 
     def __call__(self):
-        self.logger.info("cleaning %(build_dir)s", {
+        self.logger.info("[remove] %(build_dir)s", {
             'build_dir': settings.BUILD_DIR,
         })
-
         try:
             shutil.rmtree(settings.BUILD_DIR)
         except OSError as err:
