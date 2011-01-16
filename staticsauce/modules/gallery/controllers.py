@@ -15,7 +15,6 @@
 
 
 import os
-import datetime
 import StringIO
 from PIL import Image
 from staticsauce.conf import settings
