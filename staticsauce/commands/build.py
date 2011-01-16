@@ -72,9 +72,17 @@ class BuildCommand(commands.Command):
                 static_file = controller(**kwargs)
 
                 if not os.path.exists(fmt_filename) or \
-                        os.stat(fmt_filename).st_mtime < static_file.src_mtime():
+                        dependencies_modified(fmt_filename, static_file):
                     self.logger.info("[%(controller)s] %(filename)s", {
                         'controller': route.controller,
                         'filename': fmt_filename,
                     })
                     static_file.save(fmt_filename)
+
+
+def dependencies_modified(dest_filename, static_file):
+    mtime = os.stat(dest_filename).st_mtime
+    for filename in static_file.dependencies():
+        if mtime < os.stat(filename).st_mtime:
+            return True
+    return False

@@ -14,7 +14,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import os
 from PIL import Image
 from staticsauce import templating
 
@@ -25,17 +24,17 @@ class StaticFile(object):
 
 
 class TemplateFile(StaticFile):
-    def __init__(self, template, context):
+    def __init__(self, template_name, context):
         super(TemplateFile, self).__init__()
-        self.template = template
+        self.template_name = template_name
         self.context = context
 
     def save(self, filename):
         with open(filename, 'w') as f:
-            f.write(templating.render(self.template, self.context))
+            f.write(templating.render(self.template_name, self.context))
 
-    def src_mtime(self):
-        return os.stat(templating.filename(self.template)).st_mtime
+    def dependencies(self):
+        return [templating.filename(self.template_name)]
 
 
 class JPEGFile(StaticFile):
@@ -46,8 +45,8 @@ class JPEGFile(StaticFile):
         self.crop = crop
         self.quality = quality
 
-    def src_mtime(self):
-        return os.stat(self.src_filename).st_mtime
+    def dependencies(self):
+        return [self.src_filename]
 
     def save(self, dest_filename):
         self.preprocess_image().save(
