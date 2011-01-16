@@ -27,23 +27,28 @@ class BuildCommand(commands.Command):
     command = 'build'
 
     def __call__(self):
-        self.logger.info("building")
-
-        try:
-            shutil.rmtree(settings.BUILD_DIR)
-        except OSError as err:
-            if err.errno != errno.ENOENT:
-                raise
-        shutil.copytree(settings.PUBLIC_DIR, settings.BUILD_DIR)
+        for src_dir, dirnames, filenames in os.walk(settings.PUBLIC_DIR):
+            dest_dir = path_append(
+                settings.BUILD_DIR,
+                src_dir[len(settings.PUBLIC_DIR):]
+            )
+            try:
+                os.mkdir(dest_dir)
+            except OSError as err:
+                if err.errno != errno.EEXIST:
+                    raise
+            for filename in filenames:
+                dest_path = os.path.join(dest_dir, filename)
+                src_path = os.path.join(src_dir, filename)
+                if not os.path.exists(dest_path) or \
+                        os.stat(dest_path).st_mtime < os.stat(src_path).st_mtime:
+                    self.logger.info("[copy] %(src)s %(dest)s", {
+                        'src': src_path,
+                        'dest': dest_path,
+                    })
+                    shutil.copy(src_path, dest_dir)
 
         for name, route in routes.mapper:
-            self.logger.info('building route %(route)s', {
-                'route': name,
-            })
-            self.logger.info('using controller %(controller)s', {
-                'controller': route.controller,
-            })
-
             filename = path_append(settings.BUILD_DIR, route.filename)
             module, controller = route.controller.rsplit('.', 1)
             module = import_path(module)
@@ -54,9 +59,6 @@ class BuildCommand(commands.Command):
 
             for permutation in permutations:
                 fmt_filename = filename.format(**permutation)
-                self.logger.info("building %(filename)s", {
-                    'filename': fmt_filename,
-                })
 
                 try:
                     os.makedirs(os.path.dirname(fmt_filename))
@@ -67,4 +69,12 @@ class BuildCommand(commands.Command):
                 kwargs = {}
                 kwargs.update(route.kwargs)
                 kwargs.update(permutation)
-                controller(**kwargs).save(fmt_filename)
+                static_file = controller(**kwargs)
+
+                if not os.path.exists(fmt_filename) or \
+                        os.stat(fmt_filename).st_mtime < static_file.src_mtime():
+                    self.logger.info("[%(controller)s] %(filename)s", {
+                        'controller': route.controller,
+                        'filename': fmt_filename,
+                    })
+                    static_file.save(fmt_filename)

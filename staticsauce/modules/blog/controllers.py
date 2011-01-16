@@ -14,12 +14,12 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from staticsauce.files import HTMLFile
+from staticsauce.files import TemplateFile
 from staticsauce.templating import render
 from staticsauce.modules.blog import models
 
 
 def article(slug):
-    return HTMLFile(render('/blog/article.html', {
+    return TemplateFile('/blog/article.html', {
         'article': models.article(slug),
-    }))
+    })

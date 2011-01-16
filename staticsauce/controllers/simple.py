@@ -14,9 +14,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from staticsauce.files import HTMLFile
-from staticsauce.templating import render
+from staticsauce.files import TemplateFile
 
 
 def direct_to_file(template, context=None):
-    return HTMLFile(render(template, context))
+    return TemplateFile(template, context)

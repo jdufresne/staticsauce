@@ -58,11 +58,16 @@ class TemplateRenderer(object):
             if module:
                 self.env.globals.update(module.context_processor())
 
-    def render(self, template, context=None):
+    def render(self, template_name, context=None):
+        template = self.env.get_template(template_name)
+        print dir(template)
+
         if context is None:
             context = {}
-        template = self.env.get_template(template)
-        return template.render(context)
+        return self.env.get_template(template_name).render(context)
+
+    def filename(self, template_name):
+        return self.env.get_template(template_name).filename
 
 
 def autoescapefilter(func):
@@ -112,4 +117,6 @@ def inclusiontag(template):
     return decorator
 
 
-render = TemplateRenderer().render
+_renderer = TemplateRenderer()
+render = _renderer.render
+filename = _renderer.filename

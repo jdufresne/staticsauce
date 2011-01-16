@@ -18,31 +18,31 @@ import os
 import datetime
 from PIL import Image
 from staticsauce.conf import settings
-from staticsauce.files import HTMLFile, JPEGFile
+from staticsauce.files import TemplateFile, JPEGFile
 from staticsauce.templating import render
 from staticsauce.modules.gallery import models
 
 
 def albums():
-    return HTMLFile(render('/gallery/albums.html', {
+    return TemplateFile('/gallery/albums.html', {
         'albums': models.albums(),
-    }))
+    })
 
 
 def album(slug):
-    return HTMLFile(render('/gallery/album.html', {
+    return TemplateFile('/gallery/album.html', {
         'album': models.album(slug),
-    }))
+    })
 
 
 def photo(album_slug, slug):
-    return HTMLFile(render('/gallery/photo.html', {
+    return TemplateFile('/gallery/photo.html', {
         'photo': models.album(album_slug).photo(slug),
-    }))
+    })
 
 
 def image(album_slug, slug):
-    return JPEGFile(_preprocess_image(
+    return JPEGFile(
         os.path.join(
             settings.DATA_DIR,
             'gallery',
@@ -50,12 +50,13 @@ def image(album_slug, slug):
             album_slug,
             models.album(album_slug).photo(slug).filename
         ),
-        (settings.gallery.IMAGE_WIDTH, settings.gallery.IMAGE_HEIGHT)
-    ))
+        (settings.gallery.IMAGE_WIDTH, settings.gallery.IMAGE_HEIGHT),
+        settings.gallery.QUALITY
+    )
 
 
 def thumbnail(album_slug, slug):
-    return JPEGFile(_preprocess_image(
+    return JPEGFile(
         os.path.join(
             settings.DATA_DIR,
             'gallery',
@@ -64,31 +65,6 @@ def thumbnail(album_slug, slug):
             models.album(album_slug).photo(slug).filename
         ),
         (settings.gallery.THUMBNAIL_WIDTH, settings.gallery.THUMBNAIL_HEIGHT),
+        settings.gallery.QUALITY,
         settings.gallery.CROP_THUMBNAIL
-    ))
-
-
-def _preprocess_image(src, size, crop=False):
-    image = Image.open(src)
-    scaled_image = _resize(image, size, not crop)
-    if crop:
-        scaled_image = _crop_center(scaled_image, size)
-    return scaled_image
-
-
-def _resize(image, size, max=True):
-    if max and image.size[0] >= image.size[1] or \
-            not max and image.size[1] >= image.size[0]:
-        width = size[0]
-        height = width * image.size[1] / image.size[0]
-    else:
-        height = size[1]
-        width = height * image.size[0] / image.size[1]
-    return image.resize((width, height), Image.ANTIALIAS)
-
-
-def _crop_center(image, size):
-    left = (image.size[0] - size[0]) / 2 if image.size[0] > size[0] else 0
-    top = (image.size[1] - size[1]) / 2 if image.size[1] > size[1] else 0
-    box = left, top, left + size[0], top + size[1]
-    return image.crop(box)
+    )
