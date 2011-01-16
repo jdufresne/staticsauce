@@ -19,7 +19,7 @@ from staticsauce.utils import path_append, import_path
 
 
 class Route(object):
-    def __init__(self, filename, controller, permutations, **kwargs):
+    def __init__(self, filename, controller, permutations, kwargs=None):
         self.filename = filename
         self.controller = controller
         self.permutations = permutations
@@ -30,14 +30,14 @@ class RouteMapper(object):
     def __init__(self):
         self._routes = {}
 
-    def add(self, name, filename, controller, permutations=None, **kwargs):
+    def add(self, name, filename, controller, permutations=None, kwargs=None):
         if name in self._routes:
             raise KeyError(name)
         self._routes[name] = Route(
             filename,
             controller,
             permutations,
-            **kwargs
+            kwargs
         )
 
     def extend(self, path, prefix=None):
@@ -53,7 +53,7 @@ class RouteMapper(object):
                 filename,
                 route.controller,
                 route.permutations,
-                **route.kwargs
+                route.kwargs
             )
 
     def __iter__(self):

@@ -29,12 +29,12 @@ def mapper():
     mapper.add(
         'albums',
         '/albums.html',
-        'staticsauce.modules.gallery.controllers.albums'
+        controller='staticsauce.modules.gallery.controllers.albums'
     )
     mapper.add(
         'album',
         '/albums/{slug}.html',
-        'staticsauce.modules.gallery.controllers.album',
+        controller='staticsauce.modules.gallery.controllers.album',
         permutations=[{'slug': album.slug} for album in albums]
     )
     mapper.add(
@@ -46,13 +46,14 @@ def mapper():
     mapper.add(
         'image',
         '/images/gallery/{album_slug}/{slug}.jpeg',
-        'staticsauce.modules.gallery.controllers.image',
+        controller='staticsauce.modules.gallery.controllers.image',
         permutations=photo_permutations
     )
     mapper.add(
         'thumbnail',
         '/images/gallery/{album_slug}/thumbnails/{slug}.jpeg',
-        'staticsauce.modules.gallery.controllers.thumbnail',
-        permutations=photo_permutations
+        controller='staticsauce.modules.gallery.controllers.image',
+        permutations=photo_permutations,
+        kwargs={'thumbnail': True}
     )
     return mapper

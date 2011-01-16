@@ -63,9 +63,6 @@ class TemplateRenderer(object):
             context = {}
         return self.env.get_template(template_name).render(context)
 
-    def filename(self, template_name):
-        return self.env.get_template(template_name).filename
-
 
 def autoescapefilter(func):
     @jinja2.evalcontextfilter
@@ -114,6 +111,4 @@ def inclusiontag(template):
     return decorator
 
 
-_renderer = TemplateRenderer()
-render = _renderer.render
-filename = _renderer.filename
+render = TemplateRenderer().render

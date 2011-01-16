@@ -26,7 +26,7 @@ from staticsauce.utils import import_path, path_append
 class BuildCommand(commands.Command):
     command = 'build'
 
-    def __call__(self):
+    def copy_public_dir(self):
         for src_dir, dirnames, filenames in os.walk(settings.PUBLIC_DIR):
             dest_dir = path_append(
                 settings.BUILD_DIR,
@@ -48,6 +48,8 @@ class BuildCommand(commands.Command):
                     })
                     shutil.copy(src_path, dest_dir)
 
+    def __call__(self):
+        self.copy_public_dir()
         for name, route in routes.mapper:
             filename = path_append(settings.BUILD_DIR, route.filename)
             module, controller = route.controller.rsplit('.', 1)
@@ -59,6 +61,10 @@ class BuildCommand(commands.Command):
 
             for permutation in permutations:
                 fmt_filename = filename.format(**permutation)
+                self.logger.info("[%(controller)s] %(filename)s", {
+                    'controller': route.controller,
+                    'filename': fmt_filename,
+                })
 
                 try:
                     os.makedirs(os.path.dirname(fmt_filename))
@@ -67,22 +73,7 @@ class BuildCommand(commands.Command):
                         raise
 
                 kwargs = {}
-                kwargs.update(route.kwargs)
+                if route.kwargs:
+                    kwargs.update(route.kwargs)
                 kwargs.update(permutation)
-                static_file = controller(**kwargs)
-
-                if not os.path.exists(fmt_filename) or \
-                        dependencies_modified(fmt_filename, static_file):
-                    self.logger.info("[%(controller)s] %(filename)s", {
-                        'controller': route.controller,
-                        'filename': fmt_filename,
-                    })
-                    static_file.save(fmt_filename)
-
-
-def dependencies_modified(dest_filename, static_file):
-    mtime = os.stat(dest_filename).st_mtime
-    for filename in static_file.dependencies():
-        if mtime < os.stat(filename).st_mtime:
-            return True
-    return False
+                controller(**kwargs).save(fmt_filename)
