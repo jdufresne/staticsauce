@@ -59,9 +59,6 @@ class TemplateRenderer(object):
                 self.env.globals.update(module.context_processor())
 
     def render(self, template_name, context=None):
-        template = self.env.get_template(template_name)
-        print dir(template)
-
         if context is None:
             context = {}
         return self.env.get_template(template_name).render(context)
