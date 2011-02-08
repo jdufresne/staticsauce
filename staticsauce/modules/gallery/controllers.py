@@ -18,6 +18,7 @@ import os
 import StringIO
 from PIL import Image
 from staticsauce.conf import settings
+from staticsauce.feed import Feed, Author, Entry
 from staticsauce.files import StaticFile
 from staticsauce.templating import render
 from staticsauce.modules.gallery import models
@@ -60,6 +61,22 @@ def image(album_slug, slug, thumbnail=False):
     stringio.close()
 
     return StaticFile(contents)
+
+
+def feed():
+    feed = Feed()
+    feed.title = "{}'s photos".format(settings.AUTHOR)
+    feed.authors.append(Author(settings.AUTHOR, settings.AUTHOR_EMAIL))
+    feed.id = 'http://jondufresne.org/feeds/gallery.xml'
+
+    for album in models.albums():
+        entry = Entry(render('/gallery/entry.html', {
+            'album': album,
+        }))
+        entry.title = album.title
+        entry.updated = album.date
+        feed.entries.append(entry)
+    return StaticFile(feed.xml())
 
 
 def _image_filename(album_slug, slug):

@@ -58,6 +58,7 @@ if __name__ == '__main__':
             'staticsauce.controllers',
             'staticsauce.modules',
             'staticsauce.modules.blog',
+            'staticsauce.modules.cssminify',
             'staticsauce.modules.gallery',
             'staticsauce.modules.nav',
         ],

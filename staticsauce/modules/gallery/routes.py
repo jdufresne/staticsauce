@@ -14,6 +14,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+from staticsauce.conf import settings
 from staticsauce.routes import RouteMapper
 from staticsauce.modules.gallery import models
 
@@ -25,6 +26,12 @@ def mapper():
         {'album_slug': album.slug, 'slug': photo.slug}
         for album in albums for photo in album.photos
     ]
+
+    mapper.add(
+        'feed',
+        '/feeds/gallery.xml',
+        controller='staticsauce.modules.gallery.controllers.feed',
+    )
 
     mapper.add(
         'albums',
