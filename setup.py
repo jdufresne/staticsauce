@@ -73,8 +73,8 @@ if __name__ == '__main__':
                 'data/init/templates/base.html',
                 'data/init/templates/index.html',
                 'modules/nav/templates/nav/nav.html',
-            ]
+            ],
         },
         scripts=['scripts/staticsauce'],
-        cmdclass = {'test': TestCommand},
+        cmdclass={'test': TestCommand},
     )

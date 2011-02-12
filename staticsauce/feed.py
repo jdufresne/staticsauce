@@ -62,6 +62,7 @@ class Author(object):
             email.text = self.email
         return author
 
+
 class Entry(object):
     def __init__(self, content):
         self.title = None
