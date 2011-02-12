@@ -14,7 +14,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from staticsauce.conf import settings
 from staticsauce.routes import RouteMapper
 from staticsauce.modules.gallery import models
 

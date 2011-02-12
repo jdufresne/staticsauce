@@ -15,7 +15,6 @@
 
 
 import datetime
-import StringIO
 import xml.etree.ElementTree as etree
 
 
