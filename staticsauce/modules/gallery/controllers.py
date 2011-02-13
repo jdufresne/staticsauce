@@ -63,22 +63,6 @@ def image(album_slug, slug, thumbnail=False):
     return StaticFile(contents)
 
 
-def feed():
-    feed = Feed()
-    feed.title = "{}'s photos".format(settings.AUTHOR)
-    feed.authors.append(Author(settings.AUTHOR, settings.AUTHOR_EMAIL))
-    feed.id = 'http://jondufresne.org/feeds/gallery.xml'
-
-    for album in models.albums():
-        entry = Entry(render('/gallery/entry.html', {
-            'album': album,
-        }))
-        entry.title = album.title
-        entry.updated = album.date
-        feed.entries.append(entry)
-    return StaticFile(feed.xml())
-
-
 def _image_filename(album_slug, slug):
     return os.path.join(
         settings.DATA_DIR,
