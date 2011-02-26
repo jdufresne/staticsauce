@@ -47,6 +47,7 @@ class TemplateRenderer(object):
             'AUTHOR_EMAIL': settings.AUTHOR_EMAIL,
             'SITE_ROOT': settings.SITE_ROOT,
             'url': routes.mapper.url,
+            'absurl': routes.mapper.absurl,
         })
 
         self.env.filters.update({

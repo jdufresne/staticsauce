@@ -65,6 +65,12 @@ class RouteMapper(object):
             self._routes[name].filename.format(**kwargs)
         )
 
+    def absurl(self, name, **kwargs):
+        return 'http://{domain}{path}'.format(
+            domain=settings.SITE_DOMAIN,
+            path=self.url(name, **kwargs)
+        )
+
 
 if settings is not None:
     mapper = import_path(settings.ROUTES).mapper()
