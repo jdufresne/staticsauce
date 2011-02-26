@@ -15,8 +15,9 @@
 
 
 class StaticFile(object):
-    def __init__(self, content):
-        self.content = content
+    def __init__(self):
+        self.uri = None
+        self.content = None
 
     def save(self, filename):
         with open(filename, 'w') as f:

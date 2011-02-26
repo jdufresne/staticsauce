@@ -14,9 +14,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from staticsauce.files import StaticFile
 from staticsauce.templating import render
 
 
-def direct_to_file(template, context=None):
-    return StaticFile(render(template, context))
+def direct_to_file(static_file, template, context=None):
+    static_file.content = render(template, context)

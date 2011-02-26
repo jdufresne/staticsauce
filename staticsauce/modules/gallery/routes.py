@@ -56,5 +56,10 @@ def mapper():
         permutations=photo_permutations,
         kwargs={'thumbnail': True}
     )
+    mapper.add(
+        'feed',
+        '/feed.xml',
+        controller='staticsauce.modules.gallery.controllers.feed',
+    )
 
     return mapper

@@ -20,6 +20,7 @@ import shutil
 from staticsauce import commands
 from staticsauce import routes
 from staticsauce.conf import settings
+from staticsauce.files import StaticFile
 from staticsauce.utils import import_path, path_append
 
 
@@ -76,4 +77,11 @@ class BuildCommand(commands.Command):
                 if route.kwargs:
                     kwargs.update(route.kwargs)
                 kwargs.update(permutation)
-                controller(**kwargs).save(fmt_filename)
+
+                static_file = StaticFile()
+                static_file.uri = 'http://{domain}{path}'.format(
+                    domain=settings.SITE_DOMAIN,
+                    path=route.filename
+                )
+                controller(static_file, **kwargs)
+                static_file.save(fmt_filename)

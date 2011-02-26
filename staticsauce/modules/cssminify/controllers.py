@@ -18,13 +18,12 @@ import os
 import uuid
 import cssutils
 from staticsauce.conf import settings
-from staticsauce.files import StaticFile
 
 
 cssutils.ser.prefs.useMinified()
 
 
-def stylesheet():
+def stylesheet(static_file):
     stylesheets_dir = os.path.join(
         settings.DATA_DIR,
         'cssminify',
@@ -44,4 +43,4 @@ def stylesheet():
         )
     )
     stylesheet = cssutils.resolveImports(proxy_stylesheet)
-    return StaticFile(stylesheet.cssText)
+    static_file.content = stylesheet.cssText

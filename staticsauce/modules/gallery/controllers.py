@@ -18,35 +18,40 @@ import os
 import StringIO
 from PIL import Image
 from staticsauce.conf import settings
-from staticsauce.feed import Feed, Author, Entry
-from staticsauce.files import StaticFile
 from staticsauce.templating import render
 from staticsauce.modules.gallery import models
+from staticsauce.modules.gallery.feeds import AlbumFeed
 
 
-def albums():
-    return StaticFile(render('/gallery/albums.html', {
+def albums(static_file):
+    static_file.content = render('/gallery/albums.html', {
         'albums': models.albums(),
-    }))
+    })
 
 
-def album(slug):
-    return StaticFile(render('/gallery/album.html', {
+def album(static_file, slug):
+    static_file.content = render('/gallery/album.html', {
         'album': models.album(slug),
-    }))
+    })
 
 
-def photo(album_slug, slug):
-    return StaticFile(render('/gallery/photo.html', {
+def photo(static_file, album_slug, slug):
+    static_file.content = render('/gallery/photo.html', {
         'photo': models.album(album_slug).photo(slug),
-    }))
+    })
 
 
-def image(album_slug, slug, thumbnail=False):
-    size = \
-        (settings.gallery.THUMBNAIL_WIDTH, settings.gallery.THUMBNAIL_HEIGHT) \
-            if thumbnail \
-            else (settings.gallery.IMAGE_WIDTH, settings.gallery.IMAGE_HEIGHT)
+def image(static_file, album_slug, slug, thumbnail=False):
+    if thumbnail:
+        size = (
+            settings.gallery.THUMBNAIL_WIDTH,
+            settings.gallery.THUMBNAIL_HEIGHT
+        )
+    else:
+        size = (
+            settings.gallery.IMAGE_WIDTH,
+            settings.gallery.IMAGE_HEIGHT
+        )
 
     image = _preprocess_image(
         _image_filename(album_slug, slug),
@@ -55,12 +60,15 @@ def image(album_slug, slug, thumbnail=False):
         thumbnail and settings.gallery.CROP_THUMBNAIL
     )
 
-    stringio = StringIO.StringIO()
-    image.save(stringio, 'JPEG', quality=settings.gallery.QUALITY)
-    contents = stringio.getvalue()
-    stringio.close()
+    io = StringIO.StringIO()
+    image.save(io, 'JPEG', quality=settings.gallery.QUALITY)
+    static_file.content = io.getvalue()
+    io.close()
 
-    return StaticFile(contents)
+
+def feed(static_file):
+    feed = AlbumFeed(static_file.uri)
+    static_file.content = feed.xml()
 
 
 def _image_filename(album_slug, slug):
