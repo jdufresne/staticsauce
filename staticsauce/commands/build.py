@@ -20,8 +20,9 @@ import shutil
 from staticsauce import commands
 from staticsauce import routes
 from staticsauce.conf import settings
+from staticsauce.exceptions import AlreadyUpdatedError
 from staticsauce.files import StaticFile
-from staticsauce.utils import import_path, path_append
+from staticsauce.utils import import_path, path_append, file_updated
 
 
 class BuildCommand(commands.Command):
@@ -41,8 +42,7 @@ class BuildCommand(commands.Command):
             for filename in filenames:
                 dest_path = os.path.join(dest_dir, filename)
                 src_path = os.path.join(src_dir, filename)
-                if not os.path.exists(dest_path) or \
-                        os.stat(dest_path).st_mtime < os.stat(src_path).st_mtime:
+                if file_updated(dest_path, src_path):
                     self.logger.info("[copy] %(src)s %(dest)s", {
                         'src': src_path,
                         'dest': dest_path,
@@ -62,10 +62,6 @@ class BuildCommand(commands.Command):
 
             for permutation in permutations:
                 fmt_filename = filename.format(**permutation)
-                self.logger.info("[%(controller)s] %(filename)s", {
-                    'controller': route.controller,
-                    'filename': fmt_filename,
-                })
 
                 try:
                     os.makedirs(os.path.dirname(fmt_filename))
@@ -73,15 +69,24 @@ class BuildCommand(commands.Command):
                     if err.errno != errno.EEXIST:
                         raise
 
+                uri = 'http://{domain}{path}'.format(
+                    domain=settings.SITE_DOMAIN,
+                    path=route.filename
+                )
+                static_file = StaticFile(uri, fmt_filename)
+
                 kwargs = {}
                 if route.kwargs:
                     kwargs.update(route.kwargs)
                 kwargs.update(permutation)
 
-                static_file = StaticFile()
-                static_file.uri = 'http://{domain}{path}'.format(
-                    domain=settings.SITE_DOMAIN,
-                    path=route.filename
-                )
-                controller(static_file, **kwargs)
-                static_file.save(fmt_filename)
+                try:
+                    controller(static_file, **kwargs)
+                except AlreadyUpdatedError:
+                    pass
+                else:
+                    self.logger.info("[%(controller)s] %(filename)s", {
+                        'controller': route.controller,
+                        'filename': fmt_filename,
+                    })
+                    static_file.save(fmt_filename)

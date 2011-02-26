@@ -14,12 +14,23 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-class StaticFile(object):
-    def __init__(self, filename, uri):
-        self.filename = filename
-        self.uri = uri
-        self.content = None
+from staticsauce.feed import Feed
+from staticsauce.modules.gallery import models
+from staticsauce.conf import settings
 
-    def save(self, filename):
-        with open(filename, 'w') as f:
-            f.write(self.content)
+
+class AlbumFeed(Feed):
+    title = "{}'s photos".format(settings.AUTHOR)
+    content_template = '/gallery/feeds/album/content.html'
+
+    def entries(self):
+        return models.albums()
+
+    def entry_title(self, album):
+        return album.title
+
+    def entry_updated(self, album):
+        return album.date
+
+    def entry_content(self, album):
+        return album.description

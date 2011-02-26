@@ -45,3 +45,8 @@ def path_append(root, path):
         components.extend(path.split(os.sep))
         path = os.path.join(*components)
     return path
+
+
+def file_updated(dest, src):
+    return not os.path.exists(dest) or \
+        os.stat(dest).st_mtime < os.stat(src).st_mtime

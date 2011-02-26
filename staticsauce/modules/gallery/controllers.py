@@ -18,9 +18,11 @@ import os
 import StringIO
 from PIL import Image
 from staticsauce.conf import settings
-from staticsauce.templating import render
+from staticsauce.exceptions import AlreadyUpdatedError
 from staticsauce.modules.gallery import models
 from staticsauce.modules.gallery.feeds import AlbumFeed
+from staticsauce.templating import render
+from staticsauce.utils import file_updated
 
 
 def albums(static_file):
@@ -42,6 +44,10 @@ def photo(static_file, album_slug, slug):
 
 
 def image(static_file, album_slug, slug, thumbnail=False):
+    filename = _image_filename(album_slug, slug)
+    if file_updated(static_file.filename, filename):
+        raise AlreadyUpdatedError
+
     if thumbnail:
         size = (
             settings.gallery.THUMBNAIL_WIDTH,
@@ -54,7 +60,7 @@ def image(static_file, album_slug, slug, thumbnail=False):
         )
 
     image = _preprocess_image(
-        _image_filename(album_slug, slug),
+        filename,
         size,
         settings.gallery.QUALITY,
         thumbnail and settings.gallery.CROP_THUMBNAIL

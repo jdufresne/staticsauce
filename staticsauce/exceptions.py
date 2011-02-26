@@ -14,12 +14,5 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-class StaticFile(object):
-    def __init__(self, filename, uri):
-        self.filename = filename
-        self.uri = uri
-        self.content = None
-
-    def save(self, filename):
-        with open(filename, 'w') as f:
-            f.write(self.content)
+class AlreadyUpdatedError(Exception):
+    pass
