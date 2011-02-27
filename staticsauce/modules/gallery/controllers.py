@@ -45,7 +45,7 @@ def photo(static_file, album_slug, slug):
 
 def image(static_file, album_slug, slug, thumbnail=False):
     filename = _image_filename(album_slug, slug)
-    if file_updated(static_file.filename, filename):
+    if not file_updated(static_file.filename, filename):
         raise AlreadyUpdatedError
 
     if thumbnail:

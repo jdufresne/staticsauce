@@ -73,7 +73,7 @@ class BuildCommand(commands.Command):
                     domain=settings.SITE_DOMAIN,
                     path=route.filename
                 )
-                static_file = StaticFile(uri, fmt_filename)
+                static_file = StaticFile(fmt_filename, uri)
 
                 kwargs = {}
                 if route.kwargs:
