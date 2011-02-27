@@ -57,8 +57,8 @@ def mapper():
         kwargs={'thumbnail': True}
     )
     mapper.add(
-        'feed',
-        '/feeds/gallery.xml',
+        'album-feed',
+        '/feeds/gallery/albums.xml',
         controller='staticsauce.modules.gallery.controllers.feed',
     )
 
