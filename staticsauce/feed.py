@@ -73,5 +73,16 @@ class Feed(object):
         child_el = ElementTree.SubElement(el, 'updated')
         child_el.text = self.entry_updated(entry).strftime(self._RFC3339)
 
+        uri = self.entry_uri(entry)
+
+        child_el = ElementTree.SubElement(el, 'id')
+        child_el.text = uri
+
+        child_el = ElementTree.SubElement(el, 'link', {
+            'rel': 'alternate',
+            'type': 'text/html',
+            'href': uri,
+        })
+
         child_el = ElementTree.SubElement(el, 'content', {'type': 'html',})
         child_el.text = render(self.content_template, {'entry': entry,})

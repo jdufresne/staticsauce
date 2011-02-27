@@ -58,7 +58,7 @@ def mapper():
     )
     mapper.add(
         'feed',
-        '/feed.xml',
+        '/feeds/gallery.xml',
         controller='staticsauce.modules.gallery.controllers.feed',
     )
 

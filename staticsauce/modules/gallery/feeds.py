@@ -14,9 +14,10 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+from staticsauce.conf import settings
 from staticsauce.feed import Feed
 from staticsauce.modules.gallery import models
-from staticsauce.conf import settings
+from staticsauce.routes import mapper
 
 
 class AlbumFeed(Feed):
@@ -31,6 +32,9 @@ class AlbumFeed(Feed):
 
     def entry_updated(self, album):
         return album.date
+
+    def entry_uri(self, album):
+        return mapper.absurl('album', slug=album.slug)
 
     def entry_content(self, album):
         return album.description
