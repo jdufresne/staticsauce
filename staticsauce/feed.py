@@ -14,7 +14,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import time
 from xml.etree import ElementTree
 from staticsauce.conf import settings
 from staticsauce.templating import render
